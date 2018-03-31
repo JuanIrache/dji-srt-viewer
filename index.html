@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-45790897-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-45790897-1');
+</script>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>DJI SRT Flight Data Viewer</title>
+	<script src='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
+	<script src="libraries/p5.min.js"></script>
+	<script src="libraries/p5.dom.min.js"></script>
+	<script src="bundle.js"></script>
+	<style>
+	*{margin:0;}
+	#container1{
+		height: 100%;
+		width: 100%;
+		overflow: hidden;
+	}
+	#container2{
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		padding-right: 0px; /* exact value is given in JavaScript code */
+	}
+	html, body{
+		height: 100%;
+		overflow:hidden;
+	}
+	H1,H3,p {
+		font-family: Sans-serif;
+    text-align:center;
+    color:#555555;
+	}
+  H1 {
+    margin-top:20px;
+    font-size:30px;
+    margin-bottom:5px;
+  }
+  H3 {
+    font-size:20px;
+    margin-top:8px;
+    margin-bottom:8px;
+  }
+  p {
+    font-size:15px;
+  }
+  .foot {
+    text-align:left;
+    font-size:12px;
+  }
+  #text {
+    margin-top:5px;
+    margin-bottom:20px;
+  }
+
+	</style>
+</head>
+<body>
+	<div id="container1"><div id="container2">
+	<span id="p"></span>
+  <div id="text">
+	<p class="foot">Satellite and Map images created with: © <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong></p>
+
+	<H1>DJI SRT Flight Data Viewer</H1>
+	<H3>Visualize and export your DJI Mavic Pro flight data (and some other drones) easily.</H3>
+	<p>Turn on Video Captions in your camera settings within the DJI Go4 App and you will find SRT files alongside your movie clips. You can use this tool to interpret those files.</p>
+	<p>The data included is not as accurate as the drone could produce, but since that is all we have we decided to apply smoothing to it to and produce a more meaningful interpretation of your flights. This is not necessarily more accurate.</p>
+  <p>You can tweak smoothness, load satellite or maps of the location, drag over the graphs or timeline to view data in specific moments/places, export your data to other formats or launch Google Maps exactly where you shot something.</p>
+  <p>Note that so far this has only been tested with Mavic Pro SRT files. Bugs are to be expected. Source code coming soon for anyone to contribute.</p>
+  <p>Please get in touch <a href="https://forum.dji.com/thread-140031-1-1.html" target="blank">here</a> if you think you tried your drone SRT files and got no results. You can also suggest new features or share with us what you created with this tool.</p>
+  <p>Source code <a href="https://github.com/JuanIrache/dji-srt-viewer" target="_blank">here</a>.</p>
+  <p>Built with <a href="https://p5js.org" target="_blank">P5js</a>.</p>
+</div>
+</div></div>
+</body>
+</html>

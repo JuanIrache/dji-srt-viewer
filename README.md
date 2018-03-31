@@ -3,7 +3,7 @@ Visualizes DJI SRT logs
 
 Try it live here: http://tailorandwayne.com/dji-srt-viewer/
 
-Uses P5js in Instance mode (https://github.com/processing/p5.js/wiki/Global-and-instance-mode) and the following NPM modules
+Uses P5js (https://p5js.org/) in Instance mode (https://github.com/processing/p5.js/wiki/Global-and-instance-mode) and the following NPM modules
 - https://www.npmjs.com/package/dji_srt_parser
 - https://www.npmjs.com/package/latlon_to_xy
 - https://www.npmjs.com/package/p5_gui
@@ -20,8 +20,12 @@ $ npm install
 $ node build.js
 ```
 
+If ES6 is not a problem, a different approach is to use Browserify (or Watchify) from the command line:
+```shell
+$ browserify sketch.js -o bundle.js
+```
+
 ## TODO
-- Check babelify in new modules
 - satellite images appear pixelated now, for some reason
 - different playing speeds?
 - Convert to AE, gpx or kmz?

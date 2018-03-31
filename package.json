@@ -1,0 +1,23 @@
+{
+  "name": "dji_srt_visualization",
+  "version": "1.0.1",
+  "description": "Todo",
+  "main": "sketch.js",
+  "dependencies": {
+    "dji_srt_parser": "^1.0.17",
+    "latlon_to_xy": "^1.0.1",
+    "mapbox_static_helper": "^1.0.0",
+    "p5_gui": "^1.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babelify": "^8.0.0",
+    "browserify": "^16.1.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Juan Irache",
+  "license": "ISC"
+}
