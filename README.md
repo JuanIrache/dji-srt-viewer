@@ -1,6 +1,7 @@
 # dji-srt-viewer
 Visualizes DJI SRT logs
-Live here: http://tailorandwayne.com/dji-srt-viewer/
+
+Try it live here: http://tailorandwayne.com/dji-srt-viewer/
 
 Uses P5js in Instance mode (https://github.com/processing/p5.js/wiki/Global-and-instance-mode) and the following NPM modules
 - https://www.npmjs.com/package/dji_srt_parser
