@@ -12,7 +12,7 @@ Can be built with Browserify (https://www.npmjs.com/package/browserify) and Babe
 
 Discussion and suggestions also here: https://forum.dji.com/thread-140031-1-1.html
 
-## Installation and build
+## Build
 
 ```shell
 $ npm install
