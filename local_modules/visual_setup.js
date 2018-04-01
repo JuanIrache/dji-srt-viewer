@@ -18,7 +18,7 @@ function visual_setup() {
       sliderCol:p.color(50,180,255),
       playCol:p.color(255,50,50),
       buttonText:p.color(255),
-      areaAlpha:p.color(255,190),
+      areaAlpha:p.color(255),
       textCol:p.color(100),
       shadowOpacity:.5
     }},
