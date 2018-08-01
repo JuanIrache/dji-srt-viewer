@@ -783,7 +783,7 @@ var s = function( p ) {//p5js functions
 		let tokml = require("tokml");
 		let preKml = JSON.parse(DJIData.toGeoJSON());
 		preKml.features.forEach(feature => {
-			if (feature.properties.timestamp) feature.properties.timestamp = new Date(feature.properties.timestamp).toISOString()
+			if (typeof feature.properties.timestamp !== "object") feature.properties.timestamp = new Date(feature.properties.timestamp).toISOString()
 		});
 		helper.downloadData(getFileName()+".KML",tokml(preKml),"KML");
 	}
@@ -791,14 +791,10 @@ var s = function( p ) {//p5js functions
 	function downloadGPX() {
 		let togpx = require("togpx");
 		let preGpx = JSON.parse(DJIData.toGeoJSON());
-		let datesArr = preGpx.features.map(feature => {//put array of dates in the last element, which is the complete parh (Linestring)
-			if (feature.properties.timestamp) {
-				return new Date(feature.properties.timestamp).toISOString();
-			} else {
-				return ""
-			}
+		preGpx.features.forEach(feature => {
+			if (typeof feature.properties.timestamp !== "object") feature.properties.times = new Date(feature.properties.timestamp).toISOString()
 		});
-		preGpx.features[preGpx.features.length-1].properties.times = datesArr;
+		preGpx.features[preGpx.features.length-1].properties.times = preGpx.features[preGpx.features.length-1].properties.timestamp.map(stamp => new Date(stamp).toISOString());
 		helper.downloadData(getFileName()+".GPX",togpx(preGpx,{creator: "dji-srt-viewer"}),"GPX");
 	}
 

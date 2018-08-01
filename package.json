@@ -8,7 +8,7 @@
   },
   "main": "sketch.js",
   "dependencies": {
-    "dji_srt_parser": "^1.0.21",
+    "dji_srt_parser": "^1.0.23",
     "latlon_to_xy": "^1.0.2",
     "mapbox_static_helper": "^1.0.1",
     "p5_gui": "^1.0.1",
