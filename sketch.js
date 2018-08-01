@@ -328,6 +328,16 @@ var s = function( p ) {//p5js functions
 				screenshot,//callback
 				colors.buttonText);//textcolor
 
+			gui.createButton("kmlButton",
+				"KML",//text value
+				lastElt.x,//x
+				lastElt.y+lastElt.height+sizes.shadowSize*2,//y
+				thirdSize,//width
+				sizes.sliderW.height*1.2,//height
+				colors.sliderCol,//color
+				downloadKML,//callback
+				colors.buttonText);//textcolor
+
 			lastElt = gui.createButton("csvButton",
 				"CSV",//text value
 				lastElt.x+lastElt.width+sizes.shadowSize*2,//x
@@ -347,6 +357,16 @@ var s = function( p ) {//p5js functions
 				colors.sliderCol,//color
 				downloadJson,//callback
 				colors.buttonText);//textcolor
+
+				gui.createButton("gpxButton",
+					"GPX",//text value
+					lastElt.x,//x
+					lastElt.y+lastElt.height+sizes.shadowSize*2,//y
+					thirdSize,//width
+					sizes.sliderW.height*1.2,//height
+					colors.sliderCol,//color
+					downloadGPX,//callback
+					colors.buttonText);//textcolor
 
 			//////////
 
@@ -756,7 +776,30 @@ var s = function( p ) {//p5js functions
 	}
 
 	function downloadJson() {
-		helper.downloadData(getFileName()+".JSON",JSON.stringify(DJIData.metadata()),"JSON");
+		helper.downloadData(getFileName()+".JSON",DJIData.toGeoJSON(),"JSON");
+	}
+
+	function downloadKML() {
+		let tokml = require("tokml");
+		let preKml = JSON.parse(DJIData.toGeoJSON());
+		preKml.features.forEach(feature => {
+			if (feature.properties.timestamp) feature.properties.timestamp = new Date(feature.properties.timestamp).toISOString()
+		});
+		helper.downloadData(getFileName()+".KML",tokml(preKml),"KML");
+	}
+
+	function downloadGPX() {
+		let togpx = require("togpx");
+		let preGpx = JSON.parse(DJIData.toGeoJSON());
+		let datesArr = preGpx.features.map(feature => {//put array of dates in the last element, which is the complete parh (Linestring)
+			if (feature.properties.timestamp) {
+				return new Date(feature.properties.timestamp).toISOString();
+			} else {
+				return ""
+			}
+		});
+		preGpx.features[preGpx.features.length-1].properties.times = datesArr;
+		helper.downloadData(getFileName()+".GPX",togpx(preGpx,{creator: "dji-srt-viewer"}),"GPX");
 	}
 
 	function setMap(style) {

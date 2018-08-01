@@ -73,8 +73,12 @@ function helper() {
   		var element = document.createElement('a');
   		if (type === "CSV") {
   			element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text));
-  		} else {
-  			element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  		} else if (type === "KML") {
+        element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(text));
+      } else if (type === "GPX") {
+        element.setAttribute('href', 'data:text/gpx;charset=utf-8,' + encodeURIComponent(text));
+      } else if (type === "JSON") {
+  			element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(text));
   		}
   	  element.setAttribute('download', filename);
   	  element.style.display = 'none';

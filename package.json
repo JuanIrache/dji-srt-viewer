@@ -1,19 +1,25 @@
 {
   "name": "dji_srt_visualization",
   "version": "1.0.1",
-  "description": "Todo",
+  "description": "Data visualisation tool for DJI drones",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/JuanIrache/dji-srt-viewer.git"
+  },
   "main": "sketch.js",
   "dependencies": {
-    "dji_srt_parser": "^1.0.17",
-    "latlon_to_xy": "^1.0.1",
-    "mapbox_static_helper": "^1.0.0",
-    "p5_gui": "^1.0.0"
+    "dji_srt_parser": "^1.0.19",
+    "latlon_to_xy": "^1.0.2",
+    "mapbox_static_helper": "^1.0.1",
+    "p5_gui": "^1.0.1",
+    "togpx": "^0.5.4",
+    "tokml": "^0.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babelify": "^8.0.0",
-    "browserify": "^16.1.1"
+    "browserify": "^16.2.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
