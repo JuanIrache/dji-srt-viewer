@@ -104,6 +104,7 @@ var s = function( p ) {//p5js functions
 				displayError();
 			} else if (isDataValid(preDJIData)) {
 				DJIData = preDJIData;
+				console.log(JSON.stringify(DJIData.rawMetadata()[0]));
 				let zoom = setZoom();
 				player = createPlayer(DJIData.metadata().packets.length,0,true);
 				loadMap(zoom);
