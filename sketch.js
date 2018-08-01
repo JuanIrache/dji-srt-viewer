@@ -785,6 +785,7 @@ var s = function( p ) {//p5js functions
 		preKml.features.forEach(feature => {
 			if (typeof feature.properties.timestamp !== "object") feature.properties.timestamp = new Date(feature.properties.timestamp).toISOString()
 		});
+		preKml.features[preKml.features.length-1].properties.timestamp = preKml.features[preKml.features.length-1].properties.timestamp.map(stamp => new Date(stamp).toISOString());
 		helper.downloadData(getFileName()+".KML",tokml(preKml),"KML");
 	}
 
