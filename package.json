@@ -1,6 +1,6 @@
 {
   "name": "dji_srt_visualization",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Data visualisation tool for DJI drones",
   "repository": {
     "type": "git",
