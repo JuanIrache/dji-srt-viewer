@@ -28,7 +28,7 @@ $ browserify sketch.js -o bundle.js
 ## TODO
 - satellite images appear pixelated now, for some reason
 - different playing speeds?
-- Convert to AE, gpx or kmz?
+- Convert to AE?
 - check for black tiles?
 - merge more than one srt? Concat and sort by date just in case
 - Move sidebar to bottom if proportion is... Worse than square? Height still in side. Load on top? smooth vertical? Camera and location divided in lines. background and downloads divided. speeds horizontal?

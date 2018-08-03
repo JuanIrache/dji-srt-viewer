@@ -97,14 +97,38 @@ var s = function( p ) {//p5js functions
 		}
 	}
 
+	function hasExtension(filename,ext) {
+		return filename.substring(filename.length-ext.length).toUpperCase() === ext;
+	}
+
+	let decode = function(d) {
+    if (d.split(",")[0].includes("base64")) {
+      return atob(d.split(",")[1]);
+    } else {
+      return d;
+    }
+  }
+
 	function confirm(f) {
 		if (f.data && f.name) {
-			let preDJIData = DJISRTParser(f.data,f.name);
+			let preDJIData;
+			if (hasExtension(f.name,".SRT")) {
+				preDJIData = DJISRTParser(f.data,f.name);
+			} else if (hasExtension(f.name,".JSON") || hasExtension(f.name,".GEOJSON")) {
+				preDJIData = DJISRTParser(f.data,f.name,true);
+			} else if (hasExtension(f.name,".KML")) {
+				//aqui uninstall if not used
+				// let togeojson = require('togeojson');
+				// let DOMParser = require('xmldom').DOMParser;
+				// var kml = new DOMParser().parseFromString(decode(f.data));
+				// var converted = tj.kml(kml);
+				let prepareGeoJSON = require("./local_modules/prepareGeoJSON");
+				preDJIData = DJISRTParser(prepareGeoJSON(converted),f.name,true);
+			}
 			if (preDJIData == null) {
 				displayError();
 			} else if (isDataValid(preDJIData)) {
 				DJIData = preDJIData;
-				console.log(JSON.stringify(DJIData.rawMetadata()[0]));
 				let zoom = setZoom();
 				player = createPlayer(DJIData.metadata().packets.length,0,true);
 				loadMap(zoom);
@@ -500,6 +524,8 @@ var s = function( p ) {//p5js functions
 			return pckt.HB;
 		} else if (pckt.HS != undefined) {
 			return pckt.HS;
+		} else if (pckt.GPS != undefined && pckt.GPS.ALTITUDE) {
+			return pckt.GPS.ALTITUDE;
 		}
 		return 0;
 	}
