@@ -1,23 +1,28 @@
 "use strict"
 
 var s = function( p ) {//p5js functions
-	let DJISRTParser = require('dji_srt_parser');
-	let conversions = require('latlon_to_xy');
-	let helper = require('./local_modules/helper');
-	let map = require('mapbox_static_helper');
-	let mapBoxToken = require("./keys/mapBoxToken");//token for mapbox
-	let mapImages = require('./local_modules/map_drawer');
-	let createPlayer = require('./local_modules/create_player');
-	let visual_setup = require('./local_modules/visual_setup');
-	let gui = require('p5_gui');
-	let preferences;
-	let colors;
-	let DJIData;
-	let dataLoaded;
-	let player;
-	let can;
-	let gui_elts;//will store all the gui_elts elements and functions
-	let sizes;
+	const DJISRTParser 		= require('dji_srt_parser'),
+				conversions 		= require('latlon_to_xy'),
+				helper 					= require('./local_modules/helper'),
+				map 						= require('mapbox_static_helper'),
+				mapBoxToken 		= require("./keys/mapBoxToken"),//token for mapbox
+				mapImages 			= require('./local_modules/map_drawer'),
+				createPlayer 		= require('./local_modules/create_player'),
+				visual_setup 		= require('./local_modules/visual_setup'),
+				gui 						= require('p5_gui'),
+				togeojson 			= require('@mapbox/togeojson'),
+				DOMParser				= require('xmldom').DOMParser,
+				prepareGeoJSON 	= require("./local_modules/prepareGeoJSON"),
+				tokml 					= require("tokml"),
+				togpx 					= require("togpx");
+	let preferences,
+			colors,
+			DJIData,
+			dataLoaded,
+			player,
+			can,
+			gui_elts,//will store all the gui_elts elements and functions
+			sizes;
 	const tileH = 512;
 
 	p.preload = function() {
@@ -75,9 +80,9 @@ var s = function( p ) {//p5js functions
 			let toCheck = [
 				DJIData.getFileName(),
 				DJIData.metadata().stats.DATE,
-				DJIData.metadata().stats.HOME[0].LATITUDE,
+				// not essential? DJIData.metadata().stats.HOME[0].LATITUDE,
 				DJIData.metadata().stats.SPEED.THREED.avg,
-				DJIData.metadata().stats.BAROMETER || DJIData.metadata().stats.HB || DJIData.metadata().stats.HS,
+				// not effective DJIData.metadata().stats.BAROMETER || DJIData.metadata().stats.HB || DJIData.metadata().stats.HS || DJIData.metadata().stats.GPS.ALTITUDE,
 				DJIData.metadata().stats.DURATION,
 				DJIData.metadata().stats.DISTANCE,
 				DJIData.metadata().stats.GPS.LATITUDE.avg];
@@ -98,11 +103,11 @@ var s = function( p ) {//p5js functions
 	}
 
 	function hasExtension(filename,ext) {
-		return filename.substring(filename.length-ext.length).toUpperCase() === ext;
+		return filename.substring(filename.length-ext.length).toUpperCase() === ext.toUpperCase();
 	}
 
 	let decode = function(d) {
-    if (d.split(",")[0].includes("base64")) {
+    if (typeof d === "string" && d.split(",")[0].includes("base64")) {
       return atob(d.split(",")[1]);
     } else {
       return d;
@@ -115,17 +120,25 @@ var s = function( p ) {//p5js functions
 			if (hasExtension(f.name,".SRT")) {
 				preDJIData = DJISRTParser(f.data,f.name);
 			} else if (hasExtension(f.name,".JSON") || hasExtension(f.name,".GEOJSON")) {
-				preDJIData = DJISRTParser(f.data,f.name,true);
+				preDJIData = DJISRTParser(prepareGeoJSON(decode(f.data)),f.name,true);
+				console.log(preDJIData.metadata().packets[0].DATE);
 			} else if (hasExtension(f.name,".KML")) {
-				//aqui uninstall if not used
-				// let togeojson = require('togeojson');
-				// let DOMParser = require('xmldom').DOMParser;
-				// var kml = new DOMParser().parseFromString(decode(f.data));
-				// var converted = tj.kml(kml);
-				let prepareGeoJSON = require("./local_modules/prepareGeoJSON");
+				var kml = new DOMParser().parseFromString(decode(f.data));
+				var element = kml.getElementsByTagName("Style"), index;
+				for (index = element.length - 1; index >= 0; index--) {
+				    element[index].parentNode.removeChild(element[index]);
+				}
+				var converted = togeojson.kml(kml);
 				preDJIData = DJISRTParser(prepareGeoJSON(converted),f.name,true);
+				console.log(preDJIData.metadata().packets[0].DATE);
+			} else if (hasExtension(f.name,".GPX")) {
+				var gpx = new DOMParser().parseFromString(decode(f.data));
+				var converted = togeojson.gpx(gpx);
+				preDJIData = DJISRTParser(prepareGeoJSON(converted),f.name,true);
+				console.log(preDJIData.metadata().packets[0].DATE);
 			}
 			if (preDJIData == null) {
+				console.log("No data");
 				displayError();
 			} else if (isDataValid(preDJIData)) {
 				DJIData = preDJIData;
@@ -134,10 +147,13 @@ var s = function( p ) {//p5js functions
 				loadMap(zoom);
 				createGUI();
 				dataLoaded = true;
+				mapImages.refresh(map,p,true);
 			} else {
+				console.log("Data not valid");
 				displayError();
 			}
 		} else {
+			console.log("File missing");
 			displayError();
 		}
 	}
@@ -531,7 +547,9 @@ var s = function( p ) {//p5js functions
 	}
 
 	function setTone(val,min,max,neg) {
-		if (neg) {
+		if (min === max) {
+			return p.map(.5,0,1,colors.greenTone,colors.redTone);
+		} else if (neg) {
 			let biggest = Math.max(Math.abs(min),Math.abs(max));
 			if (val < 0) {
 				return p.map(val,-biggest,0,colors.redTone,colors.greenTone);
@@ -544,7 +562,11 @@ var s = function( p ) {//p5js functions
 	}
 
 	function setThick(val,min,max) {
-		return p.map(val,min,max,sizes.lineThick[0],sizes.lineThick[1]);
+		if (min !== max) {
+			return p.map(val,min,max,sizes.lineThick[0],sizes.lineThick[1]);
+		} else {
+			return (sizes.lineThick[1]-sizes.lineThick[0])/2;
+		}
 	}
 
 	function drawBg() {
@@ -556,7 +578,12 @@ var s = function( p ) {//p5js functions
 	}
 
 	function mapAlt(alt,stats) {//map "altitude" values for bottom graph
-		return p.map(alt,chooseAlt(stats).min,chooseAlt(stats).max,gui_elts.frontMap.height-sizes.margin,sizes.margin);
+		if (chooseAlt(stats).max !== chooseAlt(stats).min) {
+			return p.map(alt,chooseAlt(stats).min,chooseAlt(stats).max,gui_elts.frontMap.height-sizes.margin,sizes.margin);
+		} else {
+			return p.map(.5,0,1,gui_elts.frontMap.height-sizes.margin,sizes.margin);
+		}
+
 	}
 
   function drawOnce(metadata) {
@@ -584,10 +611,10 @@ var s = function( p ) {//p5js functions
 			p.stroke(tone,100,colors.lineBri,colors.lineAlp);
 			if (xs[1] == xs[2] && ys[1] == ys[2]) {
 				p.point(xs[2],ys[2]);
-			} else if (p.frameRate() > 12) {
+			} else /*if (p.frameRate() > 4)*/ {
 				p.curve(xs[0],ys[0],xs[1],ys[1],xs[2],ys[2],xs[3],ys[3]);
-			} else {
-				p.line(xs[1],ys[1],xs[2],ys[2]);
+			// } else {
+				// p.line(xs[1],ys[1],xs[2],ys[2]);
 			}
 		}
 		function drawMain(xs,ys) {
@@ -743,7 +770,7 @@ var s = function( p ) {//p5js functions
 		let color = p.color(tone,100,colors.lineBri);
 		let mMin = chooseAlt(stats).min;
 		let mAlt = chooseAlt(stats).max;
-		drawLegend(min,max,y,alt,mAlt,mMin,thick,stats,color,"m");
+		drawLegend(min,max,y,alt.toFixed(2),mAlt.toFixed(2),mMin.toFixed(2),thick,stats,color,"m");
 	}
 
 	function speedPointer(pck,min,max,stats,elt) {
@@ -807,7 +834,6 @@ var s = function( p ) {//p5js functions
 	}
 
 	function downloadKML() {
-		let tokml = require("tokml");
 		let preKml = JSON.parse(DJIData.toGeoJSON());
 		preKml.features.forEach(feature => {
 			if (typeof feature.properties.timestamp !== "object") feature.properties.timestamp = new Date(feature.properties.timestamp).toISOString()
@@ -817,7 +843,6 @@ var s = function( p ) {//p5js functions
 	}
 
 	function downloadGPX() {
-		let togpx = require("togpx");
 		let preGpx = JSON.parse(DJIData.toGeoJSON());
 		preGpx.features.forEach(feature => {
 			if (typeof feature.properties.timestamp !== "object") feature.properties.times = new Date(feature.properties.timestamp).toISOString()
