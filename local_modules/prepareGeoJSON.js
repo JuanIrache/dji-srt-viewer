@@ -142,7 +142,8 @@ function fromGeoJSON(JSONstr) {
         if (["LONGITUDE","LON"].includes(prop.toUpperCase())) packet.GPS[0] = pckt[prop].toString();
         else if (["LATITUDE","LAT"].includes(prop.toUpperCase())) packet.GPS[1] = pckt[prop].toString();
         else if (["ALTITUDE","ALT"].includes(prop.toUpperCase())) packet.GPS[2] = pckt[prop].toString();
-        else if (["DEVICETIME","UTC","TIME","TIMES","FEATURECOORDTIMES","COORDTIMES"].includes(prop.toUpperCase())) packet.DATE = new Date(pckt[prop]).toISOString();
+        else if ("UTC" === prop.toUpperCase() && typeof pckt[prop] === "number" && pckt[prop].toString().length > 13) packet.DATE = new Date(0).setUTCMilliseconds(pckt[prop]/1000).toISOString();
+        else if (["DEVICETIME","TIME","TIMES","FEATURECOORDTIMES","COORDTIMES"].includes(prop.toUpperCase())) packet.DATE = new Date(pckt[prop]).toISOString();
         else packet[prop.toUpperCase()] = pckt[prop].toString();
       }
     }
