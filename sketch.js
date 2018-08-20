@@ -26,7 +26,7 @@ var s = function( p ) {//p5js functions
 	const tileH = 512;
 
 	p.preload = function() {
-		helper.preloadFile("./samples/sample"+Math.floor(Math.random()*4)+".SRT",confirm);
+		helper.preloadFile("./samples/sample"+Math.floor(Math.random()*5)+".SRT",confirm);
 	}
 
 	function loadMap(zoom) {
