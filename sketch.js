@@ -482,7 +482,7 @@ var s = function( p ) {//p5js functions
 			const a = document.createElement('a');
 			a.style.display = 'none';
 			a.href = url;
-			a.download = 'test.webm';
+			a.download = getFileName() + '-map.webm';
 			document.body.appendChild(a);
 			a.click();
 			setTimeout(() => {
@@ -522,6 +522,7 @@ var s = function( p ) {//p5js functions
 
 		player.playOnce().then(() => mediaRecorder.stop());
 		mediaRecorder.start(100);
+		console.log("Recording");
 	}
 
 	p.setup = function() {
