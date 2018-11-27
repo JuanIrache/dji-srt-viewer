@@ -5,7 +5,10 @@ function createPlayer(l,c,p) {  //selects items through a timeline one at a time
   let preCurrent = -1;
   return {
     advance:function() {
-      if (playing) current = (current + 1) % length;
+      if (playing) {
+        current = (current + 1) % length;
+        if (current == 0 && typeof playing == "object") playing.finish();
+      }
     },
     getIndex:function() {return current},
     getPreIndex:function() {return preCurrent},
@@ -15,6 +18,17 @@ function createPlayer(l,c,p) {  //selects items through a timeline one at a time
       } else {
         playing = true;
       }
+    },
+    playOnce:function() {
+      current = 0;
+      return new Promise(resolve => {
+        playing = {
+          finish() {
+            playing = false;
+            resolve();
+          }
+        };
+      });
     },
     pause:function() {playing = false},
     playing:function() {return playing},

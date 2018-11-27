@@ -389,6 +389,16 @@ var s = function( p ) {//p5js functions
 				downloadCsv,//callback
 				colors.buttonText);//textcolor
 
+			gui.createButton("recordButton",
+				"Record",//text value
+				lastElt.x,//x
+				lastElt.y+lastElt.height+sizes.shadowSize*2,//y
+				thirdSize,//width
+				sizes.sliderW.height*1.2,//height
+				colors.sliderCol,//color
+				record,//callback
+				colors.buttonText);//textcolor
+
 			lastElt = gui.createButton("jsonButton",
 				"JSON",//text value
 				lastElt.x+lastElt.width+sizes.shadowSize*2,//x
@@ -399,15 +409,15 @@ var s = function( p ) {//p5js functions
 				downloadJson,//callback
 				colors.buttonText);//textcolor
 
-				gui.createButton("gpxButton",
-					"GPX",//text value
-					lastElt.x,//x
-					lastElt.y+lastElt.height+sizes.shadowSize*2,//y
-					thirdSize,//width
-					sizes.sliderW.height*1.2,//height
-					colors.sliderCol,//color
-					downloadGPX,//callback
-					colors.buttonText);//textcolor
+			gui.createButton("gpxButton",
+				"GPX",//text value
+				lastElt.x,//x
+				lastElt.y+lastElt.height+sizes.shadowSize*2,//y
+				thirdSize,//width
+				sizes.sliderW.height*1.2,//height
+				colors.sliderCol,//color
+				downloadGPX,//callback
+				colors.buttonText);//textcolor
 
 			//////////
 
@@ -459,6 +469,60 @@ var s = function( p ) {//p5js functions
 			p.text("tailorandwayne.com/dji-srt-viewer",p.width/2,p.height-1);
 		}
 	  p.save(can,getFileName()+"-"+player.getIndex(),"png");
+	}
+
+	function record() {
+		var stream = can.canvas.captureStream();
+		let options = {mimeType: 'video/webm'};
+		var mediaRecorder, recordedBlobs = [];
+
+		function download() {
+			const blob = new Blob(recordedBlobs, {type: 'video/webm'});
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = url;
+			a.download = getFileName() + '-map.webm';
+			document.body.appendChild(a);
+			a.click();
+			setTimeout(() => {
+				document.body.removeChild(a);
+				window.URL.revokeObjectURL(url);
+			}, 100);
+		}
+
+		function handleDataAvailable(event) {
+			if (event.data && event.data.size > 0)
+				recordedBlobs.push(event.data);
+		}
+
+		try {
+			mediaRecorder = new MediaRecorder(stream, options);
+		} catch (e0) {
+			console.log('Unable to create MediaRecorder with options Object: ', e0);
+			try {
+				options = {mimeType: 'video/webm,codecs=vp9'};
+				mediaRecorder = new MediaRecorder(stream, options);
+			} catch (e1) {
+				console.log('Unable to create MediaRecorder with options Object: ', e1);
+				try {
+					options = 'video/vp8'; // Chrome 47
+					mediaRecorder = new MediaRecorder(stream, options);
+				} catch (e2) {
+					alert('MediaRecorder is not supported by this browser.\n\n' +
+						'Try Firefox 29 or later, or Chrome 47 or later, ' +
+						'with Enable experimental Web Platform features enabled from chrome://flags.');
+					console.error('Exception while creating MediaRecorder:', e2);
+					return;
+				}
+			}
+		}
+		mediaRecorder.onstop = download;
+		mediaRecorder.ondataavailable = handleDataAvailable;
+
+		player.playOnce().then(() => mediaRecorder.stop());
+		mediaRecorder.start(100);
+		console.log("Recording");
 	}
 
 	p.setup = function() {
