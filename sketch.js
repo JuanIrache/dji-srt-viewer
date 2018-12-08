@@ -121,7 +121,6 @@ var s = function( p ) {//p5js functions
 				preDJIData = DJISRTParser(f.data,f.name);
 			} else if (hasExtension(f.name,".JSON") || hasExtension(f.name,".GEOJSON")) {
 				preDJIData = DJISRTParser(prepareGeoJSON(decode(f.data)),f.name,true);
-				console.log(preDJIData.metadata().packets[0].DATE);
 			} else if (hasExtension(f.name,".KML")) {
 				var kml = new DOMParser().parseFromString(decode(f.data));
 				var element = kml.getElementsByTagName("Style"), index;
@@ -130,12 +129,10 @@ var s = function( p ) {//p5js functions
 				}
 				var converted = togeojson.kml(kml);
 				preDJIData = DJISRTParser(prepareGeoJSON(converted),f.name,true);
-				console.log(preDJIData.metadata().packets[0].DATE);
 			} else if (hasExtension(f.name,".GPX")) {
 				var gpx = new DOMParser().parseFromString(decode(f.data));
 				var converted = togeojson.gpx(gpx);
 				preDJIData = DJISRTParser(prepareGeoJSON(converted),f.name,true);
-				console.log(preDJIData.metadata().packets[0].DATE);
 			}
 			if (preDJIData == null) {
 				console.log("No data");
@@ -715,7 +712,7 @@ var s = function( p ) {//p5js functions
   };
 
 	function drawHome(pck) {
-		if (!pck) return;
+		if (!pck || pck.HOME == undefined) return;
 		let hLon = pck.HOME.LONGITUDE;
 		let hLat = pck.HOME.LATITUDE;
 		let hx = conversions.lonToX(hLon);
