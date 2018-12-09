@@ -456,7 +456,7 @@ var s = function( p ) {//p5js functions
 	}
 
 	function screenshot() {
-	 	p.fill(0,.5);
+	 	p.fill(255,.5);
 	 	p.noStroke();
 	  p.textAlign(p.CENTER,p.BOTTOM);
 		p.textSize(sizes.textSize*.8);
