@@ -22,10 +22,12 @@
     "babel-preset-env": "^1.7.0",
     "babelify": "^8.0.0",
     "brfs": "^2.0.0",
-    "browserify": "^16.2.2"
+    "browserify": "^16.2.2",
+    "nodemon": "^1.18.10"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon --ignore bundle.js build.js",
+    "build": "node build.js"
   },
   "author": "Juan Irache",
   "license": "ISC"
