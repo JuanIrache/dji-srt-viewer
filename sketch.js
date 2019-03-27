@@ -27,10 +27,29 @@ var s = function(p) {
   const tileH = 512;
 
   p.preload = function() {
-    helper.preloadFile(
-      './samples/sample' + Math.floor(Math.random() * 5) + '.SRT',
-      confirm
-    );
+    var url_string = window.location.href;
+    let url = new URL(url_string);
+    let source = url.searchParams.get('source');
+    function loadDemo() {
+      helper.preloadFile('./samples/sample' + Math.floor(Math.random() * 5) + '.SRT', confirm);
+    }
+    if (/\.gpx$/.test(source)) {
+      try {
+        fetch(source, {
+          method: 'GET'
+        })
+          .then(function(response) {
+            return response.text();
+          })
+          .then(str => {
+            confirm({ data: str, name: source.split('/').pop() }, loadDemo);
+          });
+      } catch (error) {
+        loadDemo();
+      }
+    } else {
+      loadDemo();
+    }
   };
 
   function loadMap(zoom) {
@@ -38,15 +57,7 @@ var s = function(p) {
     // let mapH = p.height+sizes.bottom.height*2; //cover all usable screen with map (too many map views in mapbox)
     let mapW = sizes.mainW.width;
     let mapH = sizes.mainW.height;
-    map.setup(
-      mapBoxToken,
-      mapW,
-      mapH,
-      zoom,
-      preferences.map,
-      conversions,
-      1024
-    );
+    map.setup(mapBoxToken, mapW, mapH, zoom, preferences.map, conversions, 1024);
   }
 
   function setZoom() {
@@ -69,10 +80,7 @@ var s = function(p) {
       return false;
     }
     let zoomSteps = 0.05;
-    while (
-      !isOutside(acr.LONGITUDE.max, acr.LATITUDE.max) &&
-      !isOutside(acr.LONGITUDE.min, acr.LATITUDE.min)
-    ) {
+    while (!isOutside(acr.LONGITUDE.max, acr.LATITUDE.max) && !isOutside(acr.LONGITUDE.min, acr.LATITUDE.min)) {
       zoom += zoomSteps;
       conversions.setupConversor(tileH, zoom, midLon, midLat);
       if (zoom >= 20) break;
@@ -83,11 +91,9 @@ var s = function(p) {
     for (let i = 0; i < 100; i++) {
       //check that mercator conversions are working right
       let x = p.random(-180, 180);
-      if (Math.abs(x - conversions.lonToX(conversions.xToLon(x))) > 1)
-        console.log('error x: ' + x);
+      if (Math.abs(x - conversions.lonToX(conversions.xToLon(x))) > 1) console.log('error x: ' + x);
       let y = p.random(-85, 85);
-      if (Math.abs(y - conversions.latToY(conversions.yToLat(y))) > 1)
-        console.log('error y: ' + y);
+      if (Math.abs(y - conversions.latToY(conversions.yToLat(y))) > 1) console.log('error y: ' + y);
     }
     return zoom;
   }
@@ -121,10 +127,7 @@ var s = function(p) {
   }
 
   function hasExtension(filename, ext) {
-    return (
-      filename.substring(filename.length - ext.length).toUpperCase() ===
-      ext.toUpperCase()
-    );
+    return filename.substring(filename.length - ext.length).toUpperCase() === ext.toUpperCase();
   }
 
   let decode = function(d) {
@@ -135,48 +138,53 @@ var s = function(p) {
     }
   };
 
-  function confirm(f) {
-    if (f.data && f.name) {
-      let preDJIData;
-      if (hasExtension(f.name, '.SRT')) {
-        preDJIData = DJISRTParser(f.data, f.name);
-      } else if (
-        hasExtension(f.name, '.JSON') ||
-        hasExtension(f.name, '.GEOJSON')
-      ) {
-        preDJIData = DJISRTParser(prepareGeoJSON(decode(f.data)), f.name, true);
-      } else if (hasExtension(f.name, '.KML')) {
-        var kml = new DOMParser().parseFromString(decode(f.data));
-        var element = kml.getElementsByTagName('Style'),
-          index;
-        for (index = element.length - 1; index >= 0; index--) {
-          element[index].parentNode.removeChild(element[index]);
-        }
-        var converted = togeojson.kml(kml);
-        preDJIData = DJISRTParser(prepareGeoJSON(converted), f.name, true);
-      } else if (hasExtension(f.name, '.GPX')) {
-        var gpx = new DOMParser().parseFromString(decode(f.data));
-        var converted = togeojson.gpx(gpx);
-        preDJIData = DJISRTParser(prepareGeoJSON(converted), f.name, true);
-      }
-      if (preDJIData == null) {
-        console.log('No data');
-        displayError();
-      } else if (isDataValid(preDJIData)) {
-        DJIData = preDJIData;
-        let zoom = setZoom();
-        player = createPlayer(DJIData.metadata().packets.length, 0, true);
-        loadMap(zoom);
-        createGUI();
-        dataLoaded = true;
-        mapImages.refresh(map, p, true);
-      } else {
-        console.log('Data not valid');
-        displayError();
-      }
-    } else {
-      console.log('File missing');
+  function confirm(f, alternative) {
+    const onError = function(msg) {
+      console.log(msg);
       displayError();
+      if (alternative) alternative();
+    };
+    try {
+      if (f.data && f.name) {
+        let preDJIData;
+        if (hasExtension(f.name, '.SRT')) {
+          preDJIData = DJISRTParser(f.data, f.name);
+        } else if (hasExtension(f.name, '.JSON') || hasExtension(f.name, '.GEOJSON')) {
+          preDJIData = DJISRTParser(prepareGeoJSON(decode(f.data)), f.name, true);
+        } else if (hasExtension(f.name, '.KML')) {
+          var kml = new DOMParser().parseFromString(decode(f.data));
+          var element = kml.getElementsByTagName('Style'),
+            index;
+          for (index = element.length - 1; index >= 0; index--) {
+            element[index].parentNode.removeChild(element[index]);
+          }
+          var converted = togeojson.kml(kml);
+          preDJIData = DJISRTParser(prepareGeoJSON(converted), f.name, true);
+        } else if (hasExtension(f.name, '.GPX')) {
+          var gpx = new DOMParser().parseFromString(decode(f.data));
+          var converted = togeojson.gpx(gpx);
+          preDJIData = DJISRTParser(prepareGeoJSON(converted), f.name, true);
+        }
+        if (preDJIData == null) {
+          onError('No data');
+        } else if (isDataValid(preDJIData)) {
+          DJIData = preDJIData;
+          let zoom = setZoom();
+          player = createPlayer(DJIData.metadata().packets.length, 0, true);
+          loadMap(zoom);
+          createGUI();
+          dataLoaded = true;
+          mapImages.refresh(map, p, true);
+        } else {
+          onError('Data not valid');
+        }
+      } else {
+        onError('File missing');
+      }
+    } catch (error) {
+      console.log('aqui caught');
+
+      onError('Unknown error');
     }
   }
 
@@ -299,10 +307,7 @@ var s = function(p) {
 
     lastElt = gui.createText(
       'distance',
-      helper.formatDistance(
-        DJIData.metadata().packets[0].DISTANCE,
-        DJIData.metadata().stats.DISTANCE
-      ), //VALUE
+      helper.formatDistance(DJIData.metadata().packets[0].DISTANCE, DJIData.metadata().stats.DISTANCE), //VALUE
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin, //y
       sizes.textSize, //height
@@ -423,8 +428,7 @@ var s = function(p) {
       p.BOLD
     ); //text style
 
-    let thirdSize =
-      (gui_elts.sideBar.width - sizes.margin * 2 - sizes.shadowSize * 4) / 3;
+    let thirdSize = (gui_elts.sideBar.width - sizes.margin * 2 - sizes.shadowSize * 4) / 3;
     lastElt = gui.createButton(
       'photoButton',
       'Photo', //text value
@@ -548,11 +552,7 @@ var s = function(p) {
     p.textAlign(p.CENTER, p.BOTTOM);
     p.textSize(sizes.textSize * 0.8);
     if (map.getStyle() != 'none') {
-      p.text(
-        'tailorandwayne.com/dji-srt-viewer | Map images: © Mapbox, © OpenStreetMap',
-        p.width / 2,
-        p.height - 1
-      );
+      p.text('tailorandwayne.com/dji-srt-viewer | Map images: © Mapbox, © OpenStreetMap', p.width / 2, p.height - 1);
     } else {
       p.text('tailorandwayne.com/dji-srt-viewer', p.width / 2, p.height - 1);
     }
@@ -676,12 +676,7 @@ var s = function(p) {
       gui.draw();
       let packet = DJIData.metadata().packets[player.getIndex()];
       gui_elts.dateTime.setValue(helper.formatDate(packet.DATE));
-      gui_elts.distance.setValue(
-        helper.formatDistance(
-          packet.DISTANCE,
-          DJIData.metadata().stats.DISTANCE
-        )
-      );
+      gui_elts.distance.setValue(helper.formatDistance(packet.DISTANCE, DJIData.metadata().stats.DISTANCE));
       gui_elts.coordinates.setValue(helper.formatCoordinates(packet.GPS));
       gui_elts.camera.setValue(helper.formatCamera(packet));
       drawHome(packet);
@@ -690,10 +685,7 @@ var s = function(p) {
       drawGraph(packet, gui_elts.vertSpeedText);
       drawGraph(packet, gui_elts.threeDSpeedText);
       pointTo(packet, true);
-      if (
-        player.getPreIndex() >= 0 &&
-        player.getPreIndex() !== player.getIndex()
-      ) {
+      if (player.getPreIndex() >= 0 && player.getPreIndex() !== player.getIndex()) {
         let prePacket = DJIData.metadata().packets[player.getPreIndex()];
         pointTo(prePacket, false);
       }
@@ -752,21 +744,9 @@ var s = function(p) {
   function mapAlt(alt, stats) {
     //map "altitude" values for bottom graph
     if (chooseAlt(stats).max !== chooseAlt(stats).min) {
-      return p.map(
-        alt,
-        chooseAlt(stats).min,
-        chooseAlt(stats).max,
-        gui_elts.frontMap.height - sizes.margin,
-        sizes.margin
-      );
+      return p.map(alt, chooseAlt(stats).min, chooseAlt(stats).max, gui_elts.frontMap.height - sizes.margin, sizes.margin);
     } else {
-      return p.map(
-        0.5,
-        0,
-        1,
-        gui_elts.frontMap.height - sizes.margin,
-        sizes.margin
-      );
+      return p.map(0.5, 0, 1, gui_elts.frontMap.height - sizes.margin, sizes.margin);
     }
   }
 
@@ -780,14 +760,12 @@ var s = function(p) {
       lons[2] = pck.GPS.LONGITUDE;
       lons[1] = index > 0 ? array[index - 1].GPS.LONGITUDE : lons[2];
       lons[0] = index > 1 ? array[index - 2].GPS.LONGITUDE : lons[1];
-      lons[3] =
-        index < array.length - 1 ? array[index + 1].GPS.LONGITUDE : lons[2];
+      lons[3] = index < array.length - 1 ? array[index + 1].GPS.LONGITUDE : lons[2];
       let xs = lons.map(lon => conversions.lonToX(lon));
       lats[2] = pck.GPS.LATITUDE;
       lats[1] = index > 0 ? array[index - 1].GPS.LATITUDE : lats[2];
       lats[0] = index > 1 ? array[index - 2].GPS.LATITUDE : lats[1];
-      lats[3] =
-        index < array.length - 1 ? array[index + 1].GPS.LATITUDE : lats[2];
+      lats[3] = index < array.length - 1 ? array[index + 1].GPS.LATITUDE : lats[2];
       let ys = lats.map(lat => conversions.latToY(lat));
 
       function drawCurves(thick, tone, xs, ys) {
@@ -805,16 +783,8 @@ var s = function(p) {
       function drawMain(xs, ys) {
         p.push();
         p.translate(gui_elts.topMap.width / 2, gui_elts.topMap.height / 2);
-        let thick = setThick(
-          chooseAlt(pck),
-          chooseAlt(stats).min,
-          chooseAlt(stats).max
-        );
-        let tone = setTone(
-          pck.SPEED.THREED,
-          stats.SPEED.THREED.min,
-          stats.SPEED.THREED.max
-        );
+        let thick = setThick(chooseAlt(pck), chooseAlt(stats).min, chooseAlt(stats).max);
+        let tone = setTone(pck.SPEED.THREED, stats.SPEED.THREED.min, stats.SPEED.THREED.max);
         drawCurves(thick, tone, xs, ys);
         p.pop();
       }
@@ -825,24 +795,14 @@ var s = function(p) {
       alts[2] = chooseAlt(pck);
       alts[1] = index > 0 ? chooseAlt(array[index - 1]) : alts[2];
       alts[0] = index > 1 ? chooseAlt(array[index - 2]) : alts[1];
-      alts[3] =
-        index < array.length - 1 ? chooseAlt(array[index + 1]) : alts[2];
+      alts[3] = index < array.length - 1 ? chooseAlt(array[index + 1]) : alts[2];
       ys = alts.map(alt => mapAlt(alt, stats));
 
       function drawBottom(xs, ys) {
         p.push();
         p.translate(gui_elts.frontMap.width / 2, gui_elts.frontMap.y);
-        let thick = setThick(
-          pck.GPS.LATITUDE,
-          stats.GPS.LATITUDE.max,
-          stats.GPS.LATITUDE.min
-        );
-        let tone = setTone(
-          pck.SPEED.VERTICAL,
-          stats.SPEED.VERTICAL.min,
-          stats.SPEED.VERTICAL.max,
-          true
-        );
+        let thick = setThick(pck.GPS.LATITUDE, stats.GPS.LATITUDE.max, stats.GPS.LATITUDE.min);
+        let tone = setTone(pck.SPEED.VERTICAL, stats.SPEED.VERTICAL.min, stats.SPEED.VERTICAL.max, true);
         drawCurves(thick, tone, xs, ys);
         p.pop();
       }
@@ -899,14 +859,8 @@ var s = function(p) {
     let lat = pck.GPS.LATITUDE;
     let x = conversions.lonToX(lon);
     let y = conversions.latToY(lat);
-    let tone = setTone(
-      pck.SPEED.THREED,
-      stats.SPEED.THREED.min,
-      stats.SPEED.THREED.max
-    );
-    let thick =
-      sizes.selectThick / 2 +
-      setThick(chooseAlt(pck), chooseAlt(stats).min, chooseAlt(stats).max);
+    let tone = setTone(pck.SPEED.THREED, stats.SPEED.THREED.min, stats.SPEED.THREED.max);
+    let thick = sizes.selectThick / 2 + setThick(chooseAlt(pck), chooseAlt(stats).min, chooseAlt(stats).max);
     p.push();
     p.translate(gui_elts.topMap.width / 2, gui_elts.topMap.height / 2);
     if (main) {
@@ -920,19 +874,8 @@ var s = function(p) {
       p.ellipse(x, y, thick, thick);
     }
     p.pop();
-    tone = setTone(
-      pck.SPEED.VERTICAL,
-      stats.SPEED.VERTICAL.min,
-      stats.SPEED.VERTICAL.max,
-      true
-    );
-    thick =
-      sizes.selectThick / 2 +
-      setThick(
-        pck.GPS.LATITUDE,
-        stats.GPS.LATITUDE.max,
-        stats.GPS.LATITUDE.min
-      );
+    tone = setTone(pck.SPEED.VERTICAL, stats.SPEED.VERTICAL.min, stats.SPEED.VERTICAL.max, true);
+    thick = sizes.selectThick / 2 + setThick(pck.GPS.LATITUDE, stats.GPS.LATITUDE.max, stats.GPS.LATITUDE.min);
     p.push();
     p.translate(gui_elts.frontMap.width / 2, gui_elts.frontMap.y);
     let alt = chooseAlt(pck); //set proportion variables, read other value if barometer not present
@@ -962,29 +905,13 @@ var s = function(p) {
       statsType = stats.SPEED.VERTICAL;
     }
     let val = p.map(i, max, min, statsType.min, statsType.max);
-    let tone = setTone(
-      val,
-      statsType.min,
-      statsType.max,
-      elt == gui_elts.vertSpeedText
-    ); //negative numbers ok if verticla spped
+    let tone = setTone(val, statsType.min, statsType.max, elt == gui_elts.vertSpeedText); //negative numbers ok if verticla spped
     p.stroke(tone, 100, colors.lineBri, colors.lineAlp);
     let thick = Math.abs(sizes.lineThick[0] - sizes.lineThick[1]) / 2;
     p.line(-thick / 2, i, thick / 2, i);
   }
 
-  function drawLegend(
-    min,
-    max,
-    y,
-    alt,
-    mAlt,
-    mMin,
-    thick,
-    stats,
-    color,
-    units
-  ) {
+  function drawLegend(min, max, y, alt, mAlt, mMin, thick, stats, color, units) {
     p.stroke(color);
     p.strokeWeight(5);
     p.line(-thick / 2, y, thick / 2, y);
@@ -994,36 +921,19 @@ var s = function(p) {
     p.noStroke();
     p.textSize(sizes.textSize * 0.7); //save somewhere?
     p.text(alt + ' ' + units, sizes.margin, y);
-    if (Math.abs(y - min) > sizes.textSize * 0.7)
-      p.text(mAlt + ' ' + units, sizes.margin, min); //draw max and min values if not really close to current
-    if (Math.abs(y - max) > sizes.textSize * 0.7)
-      p.text(mMin + ' ' + units, sizes.margin, max);
+    if (Math.abs(y - min) > sizes.textSize * 0.7) p.text(mAlt + ' ' + units, sizes.margin, min); //draw max and min values if not really close to current
+    if (Math.abs(y - max) > sizes.textSize * 0.7) p.text(mMin + ' ' + units, sizes.margin, max);
   }
 
   function heightPointer(pck, min, max, stats) {
-    let thick = setThick(
-      chooseAlt(pck),
-      chooseAlt(stats).min,
-      chooseAlt(stats).max
-    );
+    let thick = setThick(chooseAlt(pck), chooseAlt(stats).min, chooseAlt(stats).max);
     let alt = chooseAlt(pck); //set proportion variables, read other value if barometer not present
     let y = mapAlt(alt, stats);
     let tone = colors.textCol;
     let color = p.color(tone, 100, colors.lineBri);
     let mMin = chooseAlt(stats).min;
     let mAlt = chooseAlt(stats).max;
-    drawLegend(
-      min,
-      max,
-      y,
-      alt.toFixed(2),
-      mAlt.toFixed(2),
-      mMin.toFixed(2),
-      thick,
-      stats,
-      color,
-      'm'
-    );
+    drawLegend(min, max, y, alt.toFixed(2), mAlt.toFixed(2), mMin.toFixed(2), thick, stats, color, 'm');
   }
 
   function speedPointer(pck, min, max, stats, elt) {
@@ -1036,12 +946,7 @@ var s = function(p) {
     let thick = Math.abs(sizes.lineThick[0] - sizes.lineThick[1]) / 2;
     let alt = p.nf(pckType, 1, 2);
     let y = p.map(pckType, statsType.min, statsType.max, max, min);
-    let tone = setTone(
-      pckType,
-      statsType.min,
-      statsType.max,
-      elt == gui_elts.vertSpeedText
-    ); //negative numbers ok if verticla spped
+    let tone = setTone(pckType, statsType.min, statsType.max, elt == gui_elts.vertSpeedText); //negative numbers ok if verticla spped
     let color = p.color(tone, 100, colors.lineBri / 2);
     let mMin = p.nf(statsType.min, 1, 2);
     let mAlt = p.nf(statsType.max, 1, 2);
@@ -1095,36 +1000,23 @@ var s = function(p) {
     let preKml = JSON.parse(DJIData.toGeoJSON());
     preKml.features.forEach(feature => {
       if (typeof feature.properties.timestamp !== 'object')
-        feature.properties.timestamp = new Date(
-          feature.properties.timestamp
-        ).toISOString();
+        feature.properties.timestamp = new Date(feature.properties.timestamp).toISOString();
     });
-    preKml.features[
-      preKml.features.length - 1
-    ].properties.timestamp = preKml.features[
-      preKml.features.length - 1
-    ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
+    preKml.features[preKml.features.length - 1].properties.timestamp = preKml.features[preKml.features.length - 1].properties.timestamp.map(
+      stamp => new Date(stamp).toISOString()
+    );
     helper.downloadData(getFileName() + '.KML', tokml(preKml), 'KML');
   }
 
   function downloadGPX() {
     let preGpx = JSON.parse(DJIData.toGeoJSON());
     preGpx.features.forEach(feature => {
-      if (typeof feature.properties.timestamp !== 'object')
-        feature.properties.times = new Date(
-          feature.properties.timestamp
-        ).toISOString();
+      if (typeof feature.properties.timestamp !== 'object') feature.properties.times = new Date(feature.properties.timestamp).toISOString();
     });
-    preGpx.features[
-      preGpx.features.length - 1
-    ].properties.times = preGpx.features[
-      preGpx.features.length - 1
-    ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
-    helper.downloadData(
-      getFileName() + '.GPX',
-      togpx(preGpx, { creator: 'dji-srt-viewer' }),
-      'GPX'
+    preGpx.features[preGpx.features.length - 1].properties.times = preGpx.features[preGpx.features.length - 1].properties.timestamp.map(
+      stamp => new Date(stamp).toISOString()
     );
+    helper.downloadData(getFileName() + '.GPX', togpx(preGpx, { creator: 'dji-srt-viewer' }), 'GPX');
   }
 
   function setMap(style) {
@@ -1156,12 +1048,7 @@ var s = function(p) {
     }
     let arr = DJIData.metadata().packets;
     function preDist(val) {
-      return dist(
-        val.GPS.LONGITUDE,
-        val.GPS.LATITUDE,
-        lonLat.longitude,
-        lonLat.latitude
-      );
+      return dist(val.GPS.LONGITUDE, val.GPS.LATITUDE, lonLat.longitude, lonLat.latitude);
     }
     function selectFromMain(mx, my) {
       let bestIndex = null;
@@ -1173,10 +1060,7 @@ var s = function(p) {
           return best;
         }
       }, arr[0]);
-      if (
-        !tolerant &&
-        preDist(selected) > conversions.xToLon(sizes.selectThick, 0)
-      ) {
+      if (!tolerant && preDist(selected) > conversions.xToLon(sizes.selectThick, 0)) {
         //find if it's less than 20 (or whatever) pixels apart
         bestIndex = null;
       }
@@ -1190,12 +1074,7 @@ var s = function(p) {
       }
       let bestIndex = null;
       function computeBottomDist(packet) {
-        return dist(
-          conversions.lonToX(packet.GPS.LONGITUDE),
-          preDist(packet),
-          mx - gui_elts.frontMap.width / 2,
-          my - gui_elts.frontMap.x
-        );
+        return dist(conversions.lonToX(packet.GPS.LONGITUDE), preDist(packet), mx - gui_elts.frontMap.width / 2, my - gui_elts.frontMap.x);
       }
       let selected = arr.reduce((best, pckt, index) => {
         let newDist = computeBottomDist(pckt);
