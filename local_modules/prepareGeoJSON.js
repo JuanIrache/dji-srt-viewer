@@ -11,6 +11,7 @@ function fromGeoJSON(JSONstr) {
     GPS: ['0', '0', '0'],
     DATE: new Date().toISOString()
   };
+
   let geoJSON = typeof JSONstr === 'string' ? JSON.parse(JSONstr) : JSONstr;
   let result = [];
   let checkAndUpdateHome = function(packet, object, key) {
@@ -138,7 +139,14 @@ function fromGeoJSON(JSONstr) {
         });
         return result;
       };
-      let dateLocation = returnExisting(object.properties, ['timestamp', 'times', 'time', 'featureCoordTimes', 'coordTimes']);
+      let dateLocation = returnExisting(object.properties, [
+        'timestamp',
+        'times',
+        'time',
+        'featureCoordTimes',
+        'coordTimes',
+        'AbsoluteUtcMicroSec'
+      ]);
       for (let i = 0; i < object.geometry.coordinates.length; i++) {
         managed = true;
         if (looksLikeNumber(object.geometry.coordinates[0][0])) {
@@ -147,7 +155,11 @@ function fromGeoJSON(JSONstr) {
           if (packet.GPS.length < 3) packet.GPS[2] = 0;
           if (object.properties) {
             if (dateLocation && dateLocation.length > i) {
-              packet.DATE = new Date(dateLocation[i]).toISOString();
+              if (looksLikeNumber(dateLocation[i]) && dateLocation[i].toString().length > 15) {
+                packet.DATE = new Date(dateLocation[i] / 1000).toISOString();
+              } else {
+                packet.DATE = new Date(dateLocation[i]).toISOString();
+              }
             }
           }
           result.push(packet);
@@ -203,6 +215,7 @@ function fromGeoJSON(JSONstr) {
   if (!managed) {
     console.log('nothing found');
   }
+
   return JSON.stringify(result);
 }
 
