@@ -516,7 +516,7 @@ var s = function(p) {
 
     lastElt = gui.createText(
       'vertSpeedText',
-      'Vert. Speed', //value
+      'Vert.', //value
       gui_elts.sideBar.x + sizes.margin * 2 + labelsOffset * 1, //x
       gui_elts.topMap.height, //y
       sizes.textSize, //height
@@ -527,8 +527,8 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createText(
-      'threeDSpeedText',
-      '3D Speed', //value
+      'thwoDSpeedText',
+      '2D Speed.', //value
       gui_elts.sideBar.x + sizes.margin * 3 + labelsOffset * 2, //x
       gui_elts.topMap.height, //y
       sizes.textSize, //height
@@ -681,7 +681,7 @@ var s = function(p) {
       drawOnce(DJIData.metadata());
       drawGraph(packet, gui_elts.heightText);
       drawGraph(packet, gui_elts.vertSpeedText);
-      drawGraph(packet, gui_elts.threeDSpeedText);
+      drawGraph(packet, gui_elts.thwoDSpeedText);
       pointTo(packet, true);
       if (player.getPreIndex() >= 0 && player.getPreIndex() !== player.getIndex()) {
         let prePacket = DJIData.metadata().packets[player.getPreIndex()];
@@ -782,7 +782,7 @@ var s = function(p) {
         p.push();
         p.translate(gui_elts.topMap.width / 2, gui_elts.topMap.height / 2);
         let thick = setThick(chooseAlt(pck), chooseAlt(stats).min, chooseAlt(stats).max);
-        let tone = setTone(pck.SPEED.THREED, stats.SPEED.THREED.min, stats.SPEED.THREED.max);
+        let tone = setTone(pck.SPEED.TWOD, stats.SPEED.TWOD.min, stats.SPEED.TWOD.max);
         drawCurves(thick, tone, xs, ys);
         p.pop();
       }
@@ -898,7 +898,7 @@ var s = function(p) {
   }
 
   function speedBar(i, min, max, stats, elt) {
-    let statsType = stats.SPEED.THREED;
+    let statsType = stats.SPEED.TWOD;
     if (elt == gui_elts.vertSpeedText) {
       statsType = stats.SPEED.VERTICAL;
     }
@@ -935,8 +935,8 @@ var s = function(p) {
   }
 
   function speedPointer(pck, min, max, stats, elt) {
-    let statsType = stats.SPEED.THREED;
-    let pckType = pck.SPEED.THREED;
+    let statsType = stats.SPEED.TWOD;
+    let pckType = pck.SPEED.TWOD;
     if (elt == gui_elts.vertSpeedText) {
       statsType = stats.SPEED.VERTICAL;
       pckType = pck.SPEED.VERTICAL;
