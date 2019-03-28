@@ -34,19 +34,19 @@ var s = function(p) {
       helper.preloadFile('./samples/sample' + Math.floor(Math.random() * 5) + '.SRT', confirm);
     }
     if (/\.gpx$/.test(source)) {
-      try {
-        fetch(source, {
-          method: 'GET'
+      fetch(source, {
+        method: 'GET'
+      })
+        .then(function(response) {
+          return response.text();
         })
-          .then(function(response) {
-            return response.text();
-          })
-          .then(str => {
-            confirm({ data: str, name: source.split('/').pop() }, loadDemo);
-          });
-      } catch (error) {
-        loadDemo();
-      }
+        .then(str => {
+          confirm({ data: str, name: source.split('/').pop() }, loadDemo);
+        })
+        .catch(error => {
+          loadDemo();
+          displayError();
+        });
     } else {
       loadDemo();
     }
@@ -122,7 +122,7 @@ var s = function(p) {
     if (gui_elts && gui_elts.topHint) {
       gui_elts.topHint.setValue('Sorry. File not supported.');
     } else {
-      console.log('Browser not supported yet');
+      console.log('There was an error loading file');
     }
   }
 
