@@ -182,8 +182,6 @@ var s = function(p) {
         onError('File missing');
       }
     } catch (error) {
-      console.log('aqui caught');
-
       onError('Unknown error');
     }
   }
@@ -989,11 +987,11 @@ var s = function(p) {
   }
 
   function downloadCsv() {
-    helper.downloadData(getFileName() + '.CSV', DJIData.toCSV(false), 'CSV');
+    p.save([DJIData.toCSV(false)], getFileName(), 'CSV');
   }
 
   function downloadJson() {
-    helper.downloadData(getFileName() + '.JSON', DJIData.toGeoJSON(), 'JSON');
+    p.save([DJIData.toGeoJSON()], getFileName(), 'JSON');
   }
 
   function downloadKML() {
@@ -1005,7 +1003,7 @@ var s = function(p) {
     preKml.features[preKml.features.length - 1].properties.timestamp = preKml.features[preKml.features.length - 1].properties.timestamp.map(
       stamp => new Date(stamp).toISOString()
     );
-    helper.downloadData(getFileName() + '.KML', tokml(preKml), 'KML');
+    p.save([tokml(preKml)], getFileName(), 'KML');
   }
 
   function downloadGPX() {
@@ -1016,7 +1014,7 @@ var s = function(p) {
     preGpx.features[preGpx.features.length - 1].properties.times = preGpx.features[preGpx.features.length - 1].properties.timestamp.map(
       stamp => new Date(stamp).toISOString()
     );
-    helper.downloadData(getFileName() + '.GPX', togpx(preGpx, { creator: 'dji-srt-viewer' }), 'GPX');
+    p.save([togpx(preGpx, { creator: 'dji-srt-viewer' })], getFileName(), 'GPX');
   }
 
   function setMap(style) {
