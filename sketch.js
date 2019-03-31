@@ -516,7 +516,7 @@ var s = function(p) {
 
     lastElt = gui.createText(
       'vertSpeedText',
-      'Vert.', //value
+      'Vert. S.', //value
       gui_elts.sideBar.x + sizes.margin * 2 + labelsOffset * 1, //x
       gui_elts.topMap.height, //y
       sizes.textSize, //height
@@ -528,7 +528,7 @@ var s = function(p) {
 
     lastElt = gui.createText(
       'thwoDSpeedText',
-      '2D Speed.', //value
+      '2D Speed', //value
       gui_elts.sideBar.x + sizes.margin * 3 + labelsOffset * 2, //x
       gui_elts.topMap.height, //y
       sizes.textSize, //height
