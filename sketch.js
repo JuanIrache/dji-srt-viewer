@@ -33,20 +33,35 @@ var s = function(p) {
     function loadDemo() {
       helper.preloadFile('./samples/sample' + Math.floor(Math.random() * 5) + '.SRT', confirm);
     }
-    if (/\.gpx$/.test(source)) {
-      fetch(source, {
-        method: 'GET'
-      })
-        .then(function(response) {
-          return response.text();
+    const alternative = function(msg) {
+      return function() {
+        alert(msg);
+        loadDemo();
+      };
+    };
+    if (source != null) {
+      if (/\.gpx$/.test(source)) {
+        fetch(source, {
+          method: 'GET'
         })
-        .then(str => {
-          confirm({ data: str, name: source.split('/').pop() }, loadDemo);
-        })
-        .catch(error => {
-          loadDemo();
-          displayError();
-        });
+          .then(function(response) {
+            return response.text();
+          })
+          .then(str => {
+            if (str == null || str.length < 3) {
+              alternative(
+                'File not found. If you were using the GoPro Telemetry Extractor, this means your file was deleted from our server to preserve your privacy. You can load the file again from the GoPro Telemetry Extractor or download it in GPX to use it later.'
+              )();
+            } else {
+              confirm({ data: str, name: source.split('/').pop() }, alternative('Error in then'));
+            }
+          })
+          .catch(error => {
+            alternative('Error loading file. Please check that your file is available.')();
+          });
+      } else {
+        alternative('File type not supported')();
+      }
     } else {
       loadDemo();
     }
