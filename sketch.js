@@ -53,7 +53,7 @@ var s = function(p) {
                 'File not found. If you were using the GoPro Telemetry Extractor, this means your file was deleted from our server to preserve your privacy. You can load the file again from the GoPro Telemetry Extractor or download it in GPX to use it later.'
               )();
             } else {
-              confirm({ data: str, name: source.split('/').pop() }, alternative('Error in then'));
+              confirm({ data: str, name: source.split('/').pop() }, alternative('Error loading file'));
             }
           })
           .catch(error => {
