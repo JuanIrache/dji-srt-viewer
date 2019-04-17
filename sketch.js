@@ -27,9 +27,15 @@ var s = function(p) {
   const tileH = 512;
 
   p.preload = function() {
-    var url_string = window.location.href;
-    let url = new URL(url_string);
-    let source = url.searchParams.get('source');
+    let urlParam = function(name) {
+      var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
+      if (results == null) {
+        return null;
+      } else {
+        return decodeURI(results[1]) || 0;
+      }
+    };
+    let source = urlParam('source');
     function loadDemo() {
       helper.preloadFile('./samples/sample' + Math.floor(Math.random() * 5) + '.SRT', confirm);
     }
