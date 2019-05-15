@@ -30,6 +30,7 @@ $ browserify sketch.js -o bundle.js
 
 ## TODO
 
+- Read and save gpx in local storage?
 - satellite images appear pixelated now, for some reason
 - different playing speeds?
 - Convert to AE?
