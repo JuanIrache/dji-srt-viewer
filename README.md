@@ -30,6 +30,8 @@ $ browserify sketch.js -o bundle.js
 
 ## TODO
 
+- Compensate geoidheight when reading gpx
+- Review why the H sign appears with bad data (some gopro samples in gpx)
 - Read and save gpx in local storage?
 - satellite images appear pixelated now, for some reason
 - different playing speeds?
