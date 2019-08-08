@@ -1,4 +1,4 @@
-function fromGeoJSON(JSONstr, { speeds, speeds3D }) {
+function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
   let deduceDate = function(preDate) {
     let postDate = preDate;
     if (typeof preDate === 'number') {
@@ -241,10 +241,10 @@ function fromGeoJSON(JSONstr, { speeds, speeds3D }) {
   }
 
   //Apply known speeds
-  if (speeds && result.length === speeds.length)
+  if (speeds2D && result.length === speeds2D.length)
     result.forEach((r, i) => {
       //convert m/s to km/h
-      r.SPEED_TWOD = '' + (60 * 60 * speeds[i]) / 1000;
+      r.SPEED_TWOD = '' + (60 * 60 * speeds2D[i]) / 1000;
     });
   if (speeds3D && result.length === speeds3D.length)
     result.forEach((r, i) => {
@@ -252,10 +252,15 @@ function fromGeoJSON(JSONstr, { speeds, speeds3D }) {
       r.SPEED_THREED = '' + (60 * 60 * speeds3D[i]) / 1000;
     });
 
-  if (speeds3D && result.length === speeds3D.length && speeds && result.length === speeds.length) {
+  if (
+    speeds3D &&
+    result.length === speeds3D.length &&
+    speeds2D &&
+    result.length === speeds2D.length
+  ) {
     result.forEach((r, i) => {
       //convert m/s to km/h
-      const newSide = Math.sqrt(speeds3D[i] * speeds3D[i] - speeds[i] * speeds[i]);
+      const newSide = Math.sqrt(speeds3D[i] * speeds3D[i] - speeds2D[i] * speeds2D[i]);
       r.SPEED_VERTICAL = '' + (60 * 60 * newSide) / 1000;
     });
   }

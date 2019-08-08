@@ -191,19 +191,23 @@ var s = function(p) {
           var gpx = new DOMParser().parseFromString(decode(f.data));
           var converted = togeojson.gpx(gpx);
           ///hack to extract GoPro speeds
-          const speedRE = /<gpxtpx:speed>[\d.]+<\/gpxtpx:speed>/g;
-          const speed3DRE = /3dSpeed:\s?[\d.]+/g;
-          let matches = f.data.match(speedRE);
-          let speeds, speeds3D;
+          const speed3DRE = /<gpxtpx:speed>[\d.]+<\/gpxtpx:speed>/g;
+          const speed2DRE = /2dSpeed:\s?[\d.]+/g;
+          let matches = f.data.match(speed3DRE);
+          let speeds3D, speeds2D;
           if (matches) {
-            speeds = matches.map(m => +m.replace(/<gpxtpx:speed>([\d.]+)<\/gpxtpx:speed>/, '$1'));
+            speeds3D = matches.map(m => +m.replace(/<gpxtpx:speed>([\d.]+)<\/gpxtpx:speed>/, '$1'));
           }
-          matches = f.data.match(speed3DRE);
+          matches = f.data.match(speed2DRE);
           if (matches) {
-            speeds3D = matches.map(m => +m.replace(/3dSpeed:\s?([\d.]+)/, '$1'));
+            speeds2D = matches.map(m => +m.replace(/2dSpeed:\s?([\d.]+)/, '$1'));
           }
           //
-          preDJIData = DJISRTParser(prepareGeoJSON(converted, { speeds, speeds3D }), f.name, true);
+          preDJIData = DJISRTParser(
+            prepareGeoJSON(converted, { speeds3D, speeds2D }),
+            f.name,
+            true
+          );
         }
         if (preDJIData == null) {
           onError('No data');
