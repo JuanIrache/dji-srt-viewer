@@ -252,6 +252,14 @@ function fromGeoJSON(JSONstr, { speeds, speeds3D }) {
       r.SPEED_THREED = '' + (60 * 60 * speeds3D[i]) / 1000;
     });
 
+  if (speeds3D && result.length === speeds3D.length && speeds && result.length === speeds.length) {
+    result.forEach((r, i) => {
+      //convert m/s to km/h
+      const newSide = Math.sqrt(speeds3D[i] * speeds3D[i] - speeds[i] * speeds[i]);
+      r.SPEED_VERTICAL = '' + (60 * 60 * newSide) / 1000;
+    });
+  }
+
   return JSON.stringify(result);
 }
 
