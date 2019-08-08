@@ -59,7 +59,10 @@ var s = function(p) {
                 'File not found. If you were using the GoPro Telemetry Extractor, this means your file was deleted from our server to preserve your privacy. You can load the file again from the GoPro Telemetry Extractor or download it in GPX to use it later.'
               )();
             } else {
-              confirm({ data: str, name: source.split('/').pop() }, alternative('Error loading file'));
+              confirm(
+                { data: str, name: source.split('/').pop() },
+                alternative('Error loading file')
+              );
             }
           })
           .catch(error => {
@@ -101,7 +104,10 @@ var s = function(p) {
       return false;
     }
     let zoomSteps = 0.05;
-    while (!isOutside(acr.LONGITUDE.max, acr.LATITUDE.max) && !isOutside(acr.LONGITUDE.min, acr.LATITUDE.min)) {
+    while (
+      !isOutside(acr.LONGITUDE.max, acr.LATITUDE.max) &&
+      !isOutside(acr.LONGITUDE.min, acr.LATITUDE.min)
+    ) {
       zoom += zoomSteps;
       conversions.setupConversor(tileH, zoom, midLon, midLat);
       if (zoom >= 20) break;
@@ -184,7 +190,20 @@ var s = function(p) {
         } else if (hasExtension(f.name, '.GPX')) {
           var gpx = new DOMParser().parseFromString(decode(f.data));
           var converted = togeojson.gpx(gpx);
-          preDJIData = DJISRTParser(prepareGeoJSON(converted), f.name, true);
+          ///hack to extract GoPro speeds
+          const speedRE = /<gpxtpx:speed>[\d.]+<\/gpxtpx:speed>/g;
+          const speed3DRE = /3dSpeed:\s?[\d.]+/g;
+          let matches = f.data.match(speedRE);
+          let speeds, speeds3D;
+          if (matches) {
+            speeds = matches.map(m => +m.replace(/<gpxtpx:speed>([\d.]+)<\/gpxtpx:speed>/, '$1'));
+          }
+          matches = f.data.match(speed3DRE);
+          if (matches) {
+            speeds3D = matches.map(m => +m.replace(/3dSpeed:\s?([\d.]+)/, '$1'));
+          }
+          //
+          preDJIData = DJISRTParser(prepareGeoJSON(converted, { speeds, speeds3D }), f.name, true);
         }
         if (preDJIData == null) {
           onError('No data');
@@ -326,7 +345,10 @@ var s = function(p) {
 
     lastElt = gui.createText(
       'distance',
-      helper.formatDistance(DJIData.metadata().packets[0].DISTANCE, DJIData.metadata().stats.DISTANCE), //VALUE
+      helper.formatDistance(
+        DJIData.metadata().packets[0].DISTANCE,
+        DJIData.metadata().stats.DISTANCE
+      ), //VALUE
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin, //y
       sizes.textSize, //height
@@ -571,7 +593,11 @@ var s = function(p) {
     p.textAlign(p.CENTER, p.BOTTOM);
     p.textSize(sizes.textSize * 0.8);
     if (map.getStyle() != 'none') {
-      p.text('tailorandwayne.com/dji-srt-viewer | Map images: © Mapbox, © OpenStreetMap', p.width / 2, p.height - 1);
+      p.text(
+        'tailorandwayne.com/dji-srt-viewer | Map images: © Mapbox, © OpenStreetMap',
+        p.width / 2,
+        p.height - 1
+      );
     } else {
       p.text('tailorandwayne.com/dji-srt-viewer', p.width / 2, p.height - 1);
     }
@@ -695,7 +721,9 @@ var s = function(p) {
       gui.draw();
       let packet = DJIData.metadata().packets[player.getIndex()];
       gui_elts.dateTime.setValue(helper.formatDate(packet.DATE));
-      gui_elts.distance.setValue(helper.formatDistance(packet.DISTANCE, DJIData.metadata().stats.DISTANCE));
+      gui_elts.distance.setValue(
+        helper.formatDistance(packet.DISTANCE, DJIData.metadata().stats.DISTANCE)
+      );
       gui_elts.coordinates.setValue(helper.formatCoordinates(packet.GPS));
       gui_elts.camera.setValue(helper.formatCamera(packet));
       drawHome(packet);
@@ -763,7 +791,13 @@ var s = function(p) {
   function mapAlt(alt, stats) {
     //map "altitude" values for bottom graph
     if (chooseAlt(stats).max !== chooseAlt(stats).min) {
-      return p.map(alt, chooseAlt(stats).min, chooseAlt(stats).max, gui_elts.frontMap.height - sizes.margin, sizes.margin);
+      return p.map(
+        alt,
+        chooseAlt(stats).min,
+        chooseAlt(stats).max,
+        gui_elts.frontMap.height - sizes.margin,
+        sizes.margin
+      );
     } else {
       return p.map(0.5, 0, 1, gui_elts.frontMap.height - sizes.margin, sizes.margin);
     }
@@ -821,7 +855,12 @@ var s = function(p) {
         p.push();
         p.translate(gui_elts.frontMap.width / 2, gui_elts.frontMap.y);
         let thick = setThick(pck.GPS.LATITUDE, stats.GPS.LATITUDE.max, stats.GPS.LATITUDE.min);
-        let tone = setTone(pck.SPEED.VERTICAL, stats.SPEED.VERTICAL.min, stats.SPEED.VERTICAL.max, true);
+        let tone = setTone(
+          pck.SPEED.VERTICAL,
+          stats.SPEED.VERTICAL.min,
+          stats.SPEED.VERTICAL.max,
+          true
+        );
         drawCurves(thick, tone, xs, ys);
         p.pop();
       }
@@ -879,7 +918,8 @@ var s = function(p) {
     let x = conversions.lonToX(lon);
     let y = conversions.latToY(lat);
     let tone = setTone(pck.SPEED.THREED, stats.SPEED.THREED.min, stats.SPEED.THREED.max);
-    let thick = sizes.selectThick / 2 + setThick(chooseAlt(pck), chooseAlt(stats).min, chooseAlt(stats).max);
+    let thick =
+      sizes.selectThick / 2 + setThick(chooseAlt(pck), chooseAlt(stats).min, chooseAlt(stats).max);
     p.push();
     p.translate(gui_elts.topMap.width / 2, gui_elts.topMap.height / 2);
     if (main) {
@@ -894,7 +934,9 @@ var s = function(p) {
     }
     p.pop();
     tone = setTone(pck.SPEED.VERTICAL, stats.SPEED.VERTICAL.min, stats.SPEED.VERTICAL.max, true);
-    thick = sizes.selectThick / 2 + setThick(pck.GPS.LATITUDE, stats.GPS.LATITUDE.max, stats.GPS.LATITUDE.min);
+    thick =
+      sizes.selectThick / 2 +
+      setThick(pck.GPS.LATITUDE, stats.GPS.LATITUDE.max, stats.GPS.LATITUDE.min);
     p.push();
     p.translate(gui_elts.frontMap.width / 2, gui_elts.frontMap.y);
     let alt = chooseAlt(pck); //set proportion variables, read other value if barometer not present
@@ -952,7 +994,18 @@ var s = function(p) {
     let color = p.color(tone, 100, colors.lineBri);
     let mMin = chooseAlt(stats).min;
     let mAlt = chooseAlt(stats).max;
-    drawLegend(min, max, y, alt.toFixed(2), mAlt.toFixed(2), mMin.toFixed(2), thick, stats, color, 'm');
+    drawLegend(
+      min,
+      max,
+      y,
+      alt.toFixed(2),
+      mAlt.toFixed(2),
+      mMin.toFixed(2),
+      thick,
+      stats,
+      color,
+      'm'
+    );
   }
 
   function speedPointer(pck, min, max, stats, elt) {
@@ -1021,20 +1074,21 @@ var s = function(p) {
       if (typeof feature.properties.timestamp !== 'object')
         feature.properties.timestamp = new Date(feature.properties.timestamp).toISOString();
     });
-    preKml.features[preKml.features.length - 1].properties.timestamp = preKml.features[preKml.features.length - 1].properties.timestamp.map(
-      stamp => new Date(stamp).toISOString()
-    );
+    preKml.features[preKml.features.length - 1].properties.timestamp = preKml.features[
+      preKml.features.length - 1
+    ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
     p.save([tokml(preKml)], getFileName(), 'KML');
   }
 
   function downloadGPX() {
     let preGpx = JSON.parse(DJIData.toGeoJSON());
     preGpx.features.forEach(feature => {
-      if (typeof feature.properties.timestamp !== 'object') feature.properties.times = new Date(feature.properties.timestamp).toISOString();
+      if (typeof feature.properties.timestamp !== 'object')
+        feature.properties.times = new Date(feature.properties.timestamp).toISOString();
     });
-    preGpx.features[preGpx.features.length - 1].properties.times = preGpx.features[preGpx.features.length - 1].properties.timestamp.map(
-      stamp => new Date(stamp).toISOString()
-    );
+    preGpx.features[preGpx.features.length - 1].properties.times = preGpx.features[
+      preGpx.features.length - 1
+    ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
     p.save([togpx(preGpx, { creator: 'dji-srt-viewer' })], getFileName(), 'GPX');
   }
 
@@ -1093,7 +1147,12 @@ var s = function(p) {
       }
       let bestIndex = null;
       function computeBottomDist(packet) {
-        return dist(conversions.lonToX(packet.GPS.LONGITUDE), preDist(packet), mx - gui_elts.frontMap.width / 2, my - gui_elts.frontMap.x);
+        return dist(
+          conversions.lonToX(packet.GPS.LONGITUDE),
+          preDist(packet),
+          mx - gui_elts.frontMap.width / 2,
+          my - gui_elts.frontMap.x
+        );
       }
       let selected = arr.reduce((best, pckt, index) => {
         let newDist = computeBottomDist(pckt);
