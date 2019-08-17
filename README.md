@@ -42,3 +42,8 @@ $ browserify sketch.js -o bundle.js
 - Move sidebar to bottom if proportion is... Worse than square? Height still in side. Load on top? smooth vertical? Camera and location divided in lines. background and downloads divided. speeds horizontal?
 - drop load files?
 - move createGUI to visual_setup module?
+
+## Acknowledgements/credits
+
+- [Juan Irache](https://github.com/JuanIrache) - Main developer
+- [Marcelo Saviski](https://github.com/saviski) - Contributor
