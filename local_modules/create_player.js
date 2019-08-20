@@ -45,7 +45,7 @@ function createPlayer(l, c, p) {
       if (i != null && i <= length && i >= 0) {
         current = i;
       } else {
-        console.log("not in range");
+        console.error('not in range');
       }
     },
     setPreIndex: function(i) {
