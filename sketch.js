@@ -195,12 +195,13 @@ var s = function(p) {
           ///hack to extract GoPro speeds
           const speed3DRE = /<gpxtpx:speed>[\d.]+<\/gpxtpx:speed>/g;
           const speed2DRE = /2dSpeed:\s?[\d.]+/g;
-          let matches = f.data.match(speed3DRE);
+
+          let matches = decode(f.data).match(speed3DRE);
           let speeds3D, speeds2D;
           if (matches) {
             speeds3D = matches.map(m => +m.replace(/<gpxtpx:speed>([\d.]+)<\/gpxtpx:speed>/, '$1'));
           }
-          matches = f.data.match(speed2DRE);
+          matches = decode(f.data).match(speed2DRE);
           if (matches) {
             speeds2D = matches.map(m => +m.replace(/2dSpeed:\s?([\d.]+)/, '$1'));
           }
