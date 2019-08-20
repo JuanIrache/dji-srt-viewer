@@ -118,9 +118,11 @@ var s = function(p) {
     for (let i = 0; i < 100; i++) {
       //check that mercator conversions are working right
       let x = p.random(-180, 180);
-      if (Math.abs(x - conversions.lonToX(conversions.xToLon(x))) > 1) console.log('error x: ' + x);
+      if (Math.abs(x - conversions.lonToX(conversions.xToLon(x))) > 1)
+        console.error('error x: ' + x);
       let y = p.random(-85, 85);
-      if (Math.abs(y - conversions.latToY(conversions.yToLat(y))) > 1) console.log('error y: ' + y);
+      if (Math.abs(y - conversions.latToY(conversions.yToLat(y))) > 1)
+        console.error('error y: ' + y);
     }
     return zoom;
   }
@@ -140,7 +142,7 @@ var s = function(p) {
       if (toCheck.indexOf(null) > -1) return false;
       return true;
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return false;
     }
   }
@@ -149,7 +151,7 @@ var s = function(p) {
     if (gui_elts && gui_elts.topHint) {
       gui_elts.topHint.setValue('Sorry. File not supported.');
     } else {
-      console.log('There was an error loading file');
+      console.error('There was an error loading file');
     }
   }
 
@@ -167,7 +169,7 @@ var s = function(p) {
 
   function confirm(f, alternative) {
     const onError = function(msg) {
-      console.log(msg);
+      console.error(msg);
       displayError();
       if (alternative) alternative();
     };
@@ -226,7 +228,7 @@ var s = function(p) {
         onError('File missing');
       }
     } catch (error) {
-      onError('Unknown error');
+      onError(error);
     }
   }
 
@@ -636,12 +638,12 @@ var s = function(p) {
     try {
       mediaRecorder = new MediaRecorder(stream, options);
     } catch (e0) {
-      console.log('Unable to create MediaRecorder with options Object: ', e0);
+      console.error('Unable to create MediaRecorder with options Object: ', e0);
       try {
         options = { mimeType: 'video/webm,codecs=vp9' };
         mediaRecorder = new MediaRecorder(stream, options);
       } catch (e1) {
-        console.log('Unable to create MediaRecorder with options Object: ', e1);
+        console.error('Unable to create MediaRecorder with options Object: ', e1);
         try {
           options = 'video/vp8'; // Chrome 47
           mediaRecorder = new MediaRecorder(stream, options);

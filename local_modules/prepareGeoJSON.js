@@ -237,7 +237,7 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
     }
   }
   if (!managed) {
-    console.log('nothing found');
+    console.error('nothing found');
   }
 
   //Apply known speeds
