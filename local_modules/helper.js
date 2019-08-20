@@ -74,7 +74,7 @@ function helper() {
       let input = p.createFileInput(confirm);
       input.hide();
       input.id('file-input');
-      let loadedFile = document.getElementById('file-input').click();
+      document.getElementById('file-input').click();
     },
     launchGoogleMaps: function(lat, lon) {
       function link(url, winName, options) {
@@ -93,7 +93,9 @@ function helper() {
             if (rawFile.readyState === 4) {
               if (rawFile.status === 200 || rawFile.status == 0) {
                 let allText = rawFile.responseText;
-                let fileName = rawFile.responseURL ? rawFile.responseURL.match(/\b\w+\.(srt|SRT)$/g)[0] : 'SRT_Data';
+                let fileName = rawFile.responseURL
+                  ? rawFile.responseURL.match(/\b\w+\.(srt|SRT)$/g)[0]
+                  : 'SRT_Data';
                 let dataObj = {
                   data: allText,
                   name: fileName
