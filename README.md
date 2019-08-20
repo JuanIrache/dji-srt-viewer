@@ -30,7 +30,6 @@ $ browserify sketch.js -o bundle.js
 
 ## TODO
 
-- Loading more than one file fails
 - Review why the H sign appears with bad data (some gopro samples in gpx)
 - Read and save gpx in local storage?
 - satellite images appear pixelated now, for some reason
