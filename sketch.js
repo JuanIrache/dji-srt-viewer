@@ -1074,29 +1074,41 @@ var s = function(p) {
   function downloadJson() {
     p.save([DJIData.toGeoJSON()], getFileName(), 'JSON');
   }
-
+  
   function downloadKML() {
     let preKml = JSON.parse(DJIData.toGeoJSON());
+    let timestamp = false;		  
     preKml.features.forEach(feature => {
-      if (typeof feature.properties.timestamp !== 'object')
-        feature.properties.timestamp = new Date(feature.properties.timestamp).toISOString();
+      if ( feature.properties.hasOwnProperty('timestamp') ) {
+        timestamp = true;
+        if (typeof feature.properties.timestamp !== 'object')
+          feature.properties.timestamp = new Date(feature.properties.timestamp).toISOString();
+      }
     });
-    preKml.features[preKml.features.length - 1].properties.timestamp = preKml.features[
-      preKml.features.length - 1
-    ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
-    p.save([tokml(preKml)], getFileName(), 'KML');
+    if ( timestamp ) {
+      preKml.features[preKml.features.length - 1].properties.timestamp = preKml.features[
+        preKml.features.length - 1
+      ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
+      p.save([tokml(preKml)], getFileName(), 'KML');
+    }
   }
 
   function downloadGPX() {
     let preGpx = JSON.parse(DJIData.toGeoJSON());
+    let timestamp = false;		
     preGpx.features.forEach(feature => {
-      if (typeof feature.properties.timestamp !== 'object')
-        feature.properties.times = new Date(feature.properties.timestamp).toISOString();
+      if ( feature.properties.hasOwnProperty('timestamp') ) {
+        timestamp = true;
+        if (typeof feature.properties.timestamp !== 'object')
+          feature.properties.times = new Date(feature.properties.timestamp).toISOString();
+      }
     });
-    preGpx.features[preGpx.features.length - 1].properties.times = preGpx.features[
-      preGpx.features.length - 1
-    ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
-    p.save([togpx(preGpx, { creator: 'dji-srt-viewer' })], getFileName(), 'GPX');
+    if ( timestamp ) {
+      preGpx.features[preGpx.features.length - 1].properties.times = preGpx.features[
+        preGpx.features.length - 1
+      ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
+      p.save([togpx(preGpx, { creator: 'dji-srt-viewer' })], getFileName(), 'GPX');
+    }
   }
 
   function setMap(style) {
