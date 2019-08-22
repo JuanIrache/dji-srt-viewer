@@ -45,3 +45,4 @@ $ browserify sketch.js -o bundle.js
 
 - [Juan Irache](https://github.com/JuanIrache) - Main developer
 - [Marcelo Saviski](https://github.com/saviski) - Contributor
+- [Gastón Zalba](https://github.com/tatoz12) - Contributor
