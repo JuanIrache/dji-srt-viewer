@@ -117,7 +117,7 @@ var s = function(p) {
     zoom -= zoomSteps;
     conversions.setupConversor(tileH, zoom, midLon, midLat);
     DJIData.setSmoothing(preferences.smooth);
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       //check that mercator conversions are working right
       let x = p.random(-180, 180);
       if (Math.abs(x - conversions.lonToX(conversions.xToLon(x))) > 1)
