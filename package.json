@@ -23,7 +23,7 @@
     "babelify": "^8.0.0",
     "brfs": "^2.0.2",
     "browserify": "^16.5.0",
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.2"
   },
   "scripts": {
     "start": "nodemon --ignore bundle.js build.js",
