@@ -842,7 +842,15 @@ var s = function(p) {
         function drawCurves(thick, tone, xs, ys) {
           memo.strokeWeight(thick);
           memo.stroke(tone, 100, colors.lineBri, colors.lineAlp);
-          if (Math.round(xs[1]) == Math.round(xs[2]) && Math.round(ys[1]) == Math.round(ys[2])) {
+          if (
+            p.round(xs[0]) == p.round(xs[1]) &&
+            p.round(ys[0]) == p.round(ys[1]) &&
+            p.round(xs[1]) == p.round(xs[2]) &&
+            p.round(ys[1]) == p.round(ys[2]) &&
+            p.round(xs[2]) == p.round(xs[3]) &&
+            p.round(ys[2]) == p.round(ys[3])
+          ) {
+            // memo.line(xs[1], ys[1], xs[2], ys[2]);
             memo.point(xs[2], ys[2]);
           } else {
             memo.curve(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2], xs[3], ys[3]);
