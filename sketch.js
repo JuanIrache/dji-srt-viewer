@@ -817,7 +817,7 @@ var s = function(p) {
 
   function drawOnce(metadata) {
     if (!memo) {
-      memo = p.createGraphics(p.width, p.height);
+      memo = p.createGraphics(p.windowWidth, p.windowHeight);
       memo.noFill();
       memo.colorMode(p.HSB);
       memo.strokeCap(p.SQUARE);
@@ -893,7 +893,7 @@ var s = function(p) {
       arr.forEach(drawInside);
     }
     //print image
-    p.image(memo, p.width / 2, p.height / 2);
+    p.image(memo, p.windowWidth / 2, p.windowHeight / 2);
   }
 
   function drawHome(pck) {

@@ -30,7 +30,6 @@ $ browserify sketch.js -o bundle.js
 
 ## TODO
 
-- Tap reads as double tap on mobile
 - Review why the H sign appears with bad data (some gopro samples in gpx)
 - Read and save gpx in local storage?
 - satellite images appear pixelated now, for some reason
