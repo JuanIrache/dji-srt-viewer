@@ -25,6 +25,8 @@ var s = function(p) {
     gui_elts, //will store all the gui_elts elements and functions
     sizes;
   const tileH = 512;
+  //will store the paths image to speed up drawing
+  let memo = null;
 
   p.preload = function() {
     let urlParam = function(name) {
@@ -168,6 +170,7 @@ var s = function(p) {
   };
 
   function confirm(f, alternative) {
+    memo = null;
     const onError = function(msg) {
       console.error(msg);
       displayError();
@@ -590,6 +593,7 @@ var s = function(p) {
   }
 
   function setSmoothing(value) {
+    memo = null;
     DJIData.setSmoothing(value);
     preferences.smooth = value;
   }
@@ -688,6 +692,7 @@ var s = function(p) {
   };
 
   p.windowResized = function() {
+    memo = null;
     sizes = visual_setup.setSizes(); // adapt sizes for everything
     createGUI();
     let zoom = setZoom();
@@ -811,70 +816,76 @@ var s = function(p) {
   }
 
   function drawOnce(metadata) {
-    let arr = metadata.packets;
-    let stats = metadata.stats;
-    //
-    function drawInside(pck, index, array) {
-      let lons = [0, 0, 0, 0]; //lat and lon for drawing curves
-      let lats = [0, 0, 0, 0];
-      lons[2] = pck.GPS.LONGITUDE;
-      lons[1] = index > 0 ? array[index - 1].GPS.LONGITUDE : lons[2];
-      lons[0] = index > 1 ? array[index - 2].GPS.LONGITUDE : lons[1];
-      lons[3] = index < array.length - 1 ? array[index + 1].GPS.LONGITUDE : lons[2];
-      let xs = lons.map(lon => conversions.lonToX(lon));
-      lats[2] = pck.GPS.LATITUDE;
-      lats[1] = index > 0 ? array[index - 1].GPS.LATITUDE : lats[2];
-      lats[0] = index > 1 ? array[index - 2].GPS.LATITUDE : lats[1];
-      lats[3] = index < array.length - 1 ? array[index + 1].GPS.LATITUDE : lats[2];
-      let ys = lats.map(lat => conversions.latToY(lat));
+    if (!memo) {
+      memo = p.createGraphics(p.width, p.height);
+      memo.noFill();
+      memo.colorMode(p.HSB);
+      memo.strokeCap(p.SQUARE);
+      //create image
+      let arr = metadata.packets;
+      let stats = metadata.stats;
+      //
+      function drawInside(pck, index, array) {
+        let lons = [0, 0, 0, 0]; //lat and lon for drawing curves
+        let lats = [0, 0, 0, 0];
+        lons[2] = pck.GPS.LONGITUDE;
+        lons[1] = index > 0 ? array[index - 1].GPS.LONGITUDE : lons[2];
+        lons[0] = index > 1 ? array[index - 2].GPS.LONGITUDE : lons[1];
+        lons[3] = index < array.length - 1 ? array[index + 1].GPS.LONGITUDE : lons[2];
+        let xs = lons.map(lon => conversions.lonToX(lon));
+        lats[2] = pck.GPS.LATITUDE;
+        lats[1] = index > 0 ? array[index - 1].GPS.LATITUDE : lats[2];
+        lats[0] = index > 1 ? array[index - 2].GPS.LATITUDE : lats[1];
+        lats[3] = index < array.length - 1 ? array[index + 1].GPS.LATITUDE : lats[2];
+        let ys = lats.map(lat => conversions.latToY(lat));
 
-      function drawCurves(thick, tone, xs, ys) {
-        p.strokeWeight(thick);
-        p.noFill();
-        p.stroke(tone, 100, colors.lineBri, colors.lineAlp);
-        if (xs[1] == xs[2] && ys[1] == ys[2]) {
-          p.point(xs[2], ys[2]);
-        } /*if (p.frameRate() > 4)*/ else {
-          p.curve(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2], xs[3], ys[3]);
-          // } else {
-          // p.line(xs[1],ys[1],xs[2],ys[2]);
+        function drawCurves(thick, tone, xs, ys) {
+          memo.strokeWeight(thick);
+          memo.stroke(tone, 100, colors.lineBri, colors.lineAlp);
+          if (Math.round(xs[1]) == Math.round(xs[2]) && Math.round(ys[1]) == Math.round(ys[2])) {
+            memo.point(xs[2], ys[2]);
+          } else {
+            memo.curve(xs[0], ys[0], xs[1], ys[1], xs[2], ys[2], xs[3], ys[3]);
+          }
         }
+        function drawMain(xs, ys) {
+          memo.push();
+          memo.translate(gui_elts.topMap.width / 2, gui_elts.topMap.height / 2);
+          let thick = setThick(chooseAlt(pck), chooseAlt(stats).min, chooseAlt(stats).max);
+          let tone = setTone(pck.SPEED.TWOD, stats.SPEED.TWOD.min, stats.SPEED.TWOD.max);
+          drawCurves(thick, tone, xs, ys);
+          memo.pop();
+        }
+
+        drawMain(xs, ys);
+
+        let alts = [0, 0, 0, 0];
+        alts[2] = chooseAlt(pck);
+        alts[1] = index > 0 ? chooseAlt(array[index - 1]) : alts[2];
+        alts[0] = index > 1 ? chooseAlt(array[index - 2]) : alts[1];
+        alts[3] = index < array.length - 1 ? chooseAlt(array[index + 1]) : alts[2];
+        ys = alts.map(alt => mapAlt(alt, stats));
+
+        function drawBottom(xs, ys) {
+          memo.push();
+          memo.translate(gui_elts.frontMap.width / 2, gui_elts.frontMap.y);
+          let thick = setThick(pck.GPS.LATITUDE, stats.GPS.LATITUDE.max, stats.GPS.LATITUDE.min);
+          let tone = setTone(
+            pck.SPEED.VERTICAL,
+            stats.SPEED.VERTICAL.min,
+            stats.SPEED.VERTICAL.max,
+            true
+          );
+          drawCurves(thick, tone, xs, ys);
+          memo.pop();
+        }
+
+        drawBottom(xs, ys);
       }
-      function drawMain(xs, ys) {
-        p.push();
-        p.translate(gui_elts.topMap.width / 2, gui_elts.topMap.height / 2);
-        let thick = setThick(chooseAlt(pck), chooseAlt(stats).min, chooseAlt(stats).max);
-        let tone = setTone(pck.SPEED.TWOD, stats.SPEED.TWOD.min, stats.SPEED.TWOD.max);
-        drawCurves(thick, tone, xs, ys);
-        p.pop();
-      }
-
-      drawMain(xs, ys);
-
-      let alts = [0, 0, 0, 0];
-      alts[2] = chooseAlt(pck);
-      alts[1] = index > 0 ? chooseAlt(array[index - 1]) : alts[2];
-      alts[0] = index > 1 ? chooseAlt(array[index - 2]) : alts[1];
-      alts[3] = index < array.length - 1 ? chooseAlt(array[index + 1]) : alts[2];
-      ys = alts.map(alt => mapAlt(alt, stats));
-
-      function drawBottom(xs, ys) {
-        p.push();
-        p.translate(gui_elts.frontMap.width / 2, gui_elts.frontMap.y);
-        let thick = setThick(pck.GPS.LATITUDE, stats.GPS.LATITUDE.max, stats.GPS.LATITUDE.min);
-        let tone = setTone(
-          pck.SPEED.VERTICAL,
-          stats.SPEED.VERTICAL.min,
-          stats.SPEED.VERTICAL.max,
-          true
-        );
-        drawCurves(thick, tone, xs, ys);
-        p.pop();
-      }
-
-      drawBottom(xs, ys);
+      arr.forEach(drawInside);
     }
-    arr.forEach(drawInside);
+    //print image
+    p.image(memo, p.width / 2, p.height / 2);
   }
 
   function drawHome(pck) {
