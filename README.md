@@ -30,11 +30,13 @@ $ browserify sketch.js -o bundle.js
 
 ## TODO
 
+- Tap reads as double tap on mobile
+- Memoize path layer to prevent massive lag
 - Review why the H sign appears with bad data (some gopro samples in gpx)
 - Read and save gpx in local storage?
 - satellite images appear pixelated now, for some reason
 - different playing speeds?
-- Convert to AE?
+- Convert to AE mgJSON?
 - check for black tiles?
 - merge more than one srt? Concat and sort by date just in case
 - Move sidebar to bottom if proportion is... Worse than square? Height still in side. Load on top? smooth vertical? Camera and location divided in lines. background and downloads divided. speeds horizontal?
