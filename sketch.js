@@ -650,7 +650,7 @@ var s = function(p) {
       } catch (e1) {
         console.error('Unable to create MediaRecorder with options Object: ', e1);
         try {
-          options = 'video/vp8'; // Chrome 47
+          options = { mimeType: 'video/vp8' }; // Chrome 47
           mediaRecorder = new MediaRecorder(stream, options);
         } catch (e2) {
           alert(
