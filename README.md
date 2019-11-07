@@ -13,7 +13,7 @@ Uses P5js (https://p5js.org/) in Instance mode (https://github.com/processing/p5
 
 Can be built with Browserify (https://www.npmjs.com/package/browserify) and Babelify (https://www.npmjs.com/package/babelify)
 
-Discussion and suggestions also here: https://forum.dji.com/thread-140031-1-1.html
+Discussion and suggestions here: https://forum.dji.com/thread-140031-1-1.html
 
 ## Build
 
@@ -31,11 +31,9 @@ $ browserify sketch.js -o bundle.js
 ## TODO
 
 - Review why the H sign appears with bad data (some gopro samples in gpx)
-- Read and save gpx in local storage?
+- Read and save remote gpx in local storage?
 - satellite images appear pixelated now, for some reason
 - different playing speeds?
-- Convert to AE mgJSON?
-- check for black tiles?
 - merge more than one srt? Concat and sort by date just in case
 - Move sidebar to bottom if proportion is... Worse than square? Height still in side. Load on top? smooth vertical? Camera and location divided in lines. background and downloads divided. speeds horizontal?
 - drop load files?
