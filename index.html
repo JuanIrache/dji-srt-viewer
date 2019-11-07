@@ -15,6 +15,10 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Visualize the SRT flight data from your DJI drone (Mavic Pro, Mavic 2 [Pro/Zoom], Matrice, Phantom [3/4/Pro]) and other file formats (GPX, KML...) and convert them to other software: After Effects (mgJSON), Virb Edit (GPX), Google Earth (KML), Excel (CSV). Save your visualizations as photos and videos."
+    />
 
     <title>DJI SRT Flight Data Viewer</title>
     <script
@@ -65,6 +69,11 @@
         margin-top: 8px;
         margin-bottom: 8px;
       }
+      h4 {
+        text-align: center;
+        margin-top: 15px;
+        margin-bottom: 8px;
+      }
       p {
         font-size: 15px;
       }
@@ -95,23 +104,31 @@
           </p>
 
           <H1>DJI SRT Flight Data Viewer</H1>
-          <H3>Visualize and export your DJI Mavic flight data (and some other devices) easily.</H3>
-          <p>Now supporting Mavic 2 Pro and Mavic 2 Zoom! (elevation data is not available)</p>
+          <H3
+            >Visualize the SRT flight data from your DJI drone (Mavic Pro, Mavic 2 [Pro/Zoom],
+            Matrice, Phantom [3/4/Pro]).</H3
+          >
+          <p>
+            You can also load other file formats (GPX, KML...) and convert them to other software:
+            After Effects (mgJSON), Virb Edit (GPX), Google Earth (KML), Excel (CSV). Save your
+            visualizations as photos and videos.
+          </p>
+          <h4>Instructions</h4>
           <p>
             Turn on Video Captions in your camera settings within the DJI Go4 App and you will find
             SRT files alongside your movie clips. You can use this tool to interpret those files.
           </p>
           <p>
-            The data included is not as accurate as the drone could produce, but since that is all
-            we have we decided to apply smoothing to it to and produce a more meaningful
-            interpretation of your flights. This is not necessarily more accurate.
+            The data included in some drones (Mavic Pro) is not as accurate as the drone could
+            produce, but since that is all we have we decided to apply smoothing to it to and
+            produce a more meaningful interpretation of your flights. This is not necessarily more
+            accurate.
           </p>
           <p>
             You can tweak smoothness, load satellite or maps of the location, drag over the graphs
             or timeline to view data in specific moments/places, export your data to other formats
             or launch Google Maps exactly where you shot something.
           </p>
-          <p>Export to KML to visualise on Google Earth, and to GPX or CSV for other software.</p>
           <p>
             Phantom 4 Pro (P4P) files have embedded subtitles instead of SRT files. You can try
             extracting the SRT data with
