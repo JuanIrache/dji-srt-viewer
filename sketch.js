@@ -480,12 +480,37 @@ var s = function(p) {
     ); //text style
 
     let thirdSize = (gui_elts.sideBar.width - sizes.margin * 2 - sizes.shadowSize * 4) / 3;
+    let halfSize = (gui_elts.sideBar.width - sizes.margin * 2 - sizes.shadowSize * 2) / 2;
+    lastElt = gui.createButton(
+      'mgjsonButton',
+      'After Effects', //text value
+      gui_elts.sideBar.x + sizes.margin, //x
+      lastElt.y + lastElt.height + sizes.textMargin, //y
+      halfSize, //width
+      sizes.sliderW.height * 1.2, //height
+      colors.sliderCol, //color
+      downloadMgjson, //callback
+      colors.buttonText
+    ); //textcolor
+
+    gui.createButton(
+      'gpxButton',
+      'GPX', //text value
+      lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
+      lastElt.y, //y
+      halfSize, //width
+      sizes.sliderW.height * 1.2, //height
+      colors.sliderCol, //color
+      downloadGPX, //callback
+      colors.buttonText
+    ); //textcolor
+
     lastElt = gui.createButton(
       'photoButton',
       'Photo', //text value
-      gui_elts.sideBar.x + sizes.margin, //x
-      lastElt.y + lastElt.height + sizes.textMargin, //y
-      thirdSize, //width
+      lastElt.x, //x
+      lastElt.y + lastElt.height + sizes.shadowSize * 2, //y
+      halfSize, //width
       sizes.sliderW.height * 1.2, //height
       colors.sliderCol, //color
       screenshot, //callback
@@ -493,6 +518,18 @@ var s = function(p) {
     ); //textcolor
 
     gui.createButton(
+      'recordButton',
+      'Video', //text value
+      lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
+      lastElt.y, //y
+      halfSize, //width
+      sizes.sliderW.height * 1.2, //height
+      colors.sliderCol, //color
+      record, //callback
+      colors.buttonText
+    ); //textcolor
+
+    lastElt = gui.createButton(
       'kmlButton',
       'KML', //text value
       lastElt.x, //x
@@ -516,18 +553,6 @@ var s = function(p) {
       colors.buttonText
     ); //textcolor
 
-    gui.createButton(
-      'recordButton',
-      'Record', //text value
-      lastElt.x, //x
-      lastElt.y + lastElt.height + sizes.shadowSize * 2, //y
-      thirdSize, //width
-      sizes.sliderW.height * 1.2, //height
-      colors.sliderCol, //color
-      record, //callback
-      colors.buttonText
-    ); //textcolor
-
     lastElt = gui.createButton(
       'jsonButton',
       'JSON', //text value
@@ -537,18 +562,6 @@ var s = function(p) {
       sizes.sliderW.height * 1.2, //height
       colors.sliderCol, //color
       downloadJson, //callback
-      colors.buttonText
-    ); //textcolor
-
-    gui.createButton(
-      'gpxButton',
-      'GPX', //text value
-      lastElt.x, //x
-      lastElt.y + lastElt.height + sizes.shadowSize * 2, //y
-      thirdSize, //width
-      sizes.sliderW.height * 1.2, //height
-      colors.sliderCol, //color
-      downloadGPX, //callback
       colors.buttonText
     ); //textcolor
 
@@ -1088,6 +1101,10 @@ var s = function(p) {
 
   function downloadCsv() {
     p.save([DJIData.toCSV(false)], getFileName(), 'CSV');
+  }
+
+  function downloadMgjson() {
+    p.save([JSON.stringify(DJIData.toMGJSON())], getFileName(), 'MGJSON');
   }
 
   function downloadJson() {
