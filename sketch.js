@@ -27,6 +27,8 @@ var s = function(p) {
   const tileH = 512;
   //will store the paths image to speed up drawing
   let memo = null;
+  //Remember if this is an external or internal file
+  let external = false;
 
   p.preload = function() {
     let urlParam = function(name) {
@@ -68,7 +70,8 @@ var s = function(p) {
             } else {
               confirm(
                 { data: str, name: source.split("/").pop() },
-                alternative("Error loading file")
+                alternative("Error loading file"),
+                true
               );
             }
           })
@@ -187,7 +190,8 @@ var s = function(p) {
     }
   };
 
-  function confirm(f, alternative) {
+  function confirm(f, alternative, isExternal = false) {
+    external = false;
     memo = null;
     const onError = function(msg) {
       console.error(msg);
@@ -247,6 +251,7 @@ var s = function(p) {
         if (preDJIData == null) {
           onError("No data");
         } else if (isDataValid(preDJIData)) {
+          external = isExternal;
           DJIData = preDJIData;
           let zoom = setZoom();
           player = createPlayer(DJIData.metadata().packets.length, 0, true);
@@ -512,35 +517,40 @@ var s = function(p) {
       (gui_elts.sideBar.width - sizes.margin * 2 - sizes.shadowSize * 4) / 3;
     let halfSize =
       (gui_elts.sideBar.width - sizes.margin * 2 - sizes.shadowSize * 2) / 2;
-    lastElt = gui.createButton(
-      "mgjsonButton",
-      "After Effects", //text value
-      gui_elts.sideBar.x + sizes.margin, //x
-      lastElt.y + lastElt.height + sizes.textMargin, //y
-      halfSize, //width
-      sizes.sliderW.height * 1.2, //height
-      colors.sliderCol, //color
-      downloadMgjson, //callback
-      colors.buttonText
-    ); //textcolor
 
-    gui.createButton(
-      "gpxButton",
-      "GPX", //text value
-      lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
-      lastElt.y, //y
-      halfSize, //width
-      sizes.sliderW.height * 1.2, //height
-      colors.sliderCol, //color
-      downloadGPX, //callback
-      colors.buttonText
-    ); //textcolor
+    if (!external) {
+      lastElt = gui.createButton(
+        "mgjsonButton",
+        "After Effects", //text value
+        gui_elts.sideBar.x + sizes.margin, //x
+        lastElt.y + lastElt.height + sizes.textMargin, //y
+        halfSize, //width
+        sizes.sliderW.height * 1.2, //height
+        colors.sliderCol, //color
+        downloadMgjson, //callback
+        colors.buttonText
+      ); //textcolor
+
+      gui.createButton(
+        "gpxButton",
+        "GPX", //text value
+        lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
+        lastElt.y, //y
+        halfSize, //width
+        sizes.sliderW.height * 1.2, //height
+        colors.sliderCol, //color
+        downloadGPX, //callback
+        colors.buttonText
+      ); //textcolor
+    }
+
+    let flexibleMargin = external ? sizes.textMargin : sizes.shadowSize * 2;
 
     lastElt = gui.createButton(
       "photoButton",
       "Photo", //text value
-      lastElt.x, //x
-      lastElt.y + lastElt.height + sizes.shadowSize * 2, //y
+      gui_elts.sideBar.x + sizes.margin, //x
+      lastElt.y + lastElt.height + flexibleMargin, //y
       halfSize, //width
       sizes.sliderW.height * 1.2, //height
       colors.sliderCol, //color
@@ -560,48 +570,50 @@ var s = function(p) {
       colors.buttonText
     ); //textcolor
 
-    lastElt = gui.createButton(
-      "kmlButton",
-      "KML", //text value
-      lastElt.x, //x
-      lastElt.y + lastElt.height + sizes.shadowSize * 2, //y
-      thirdSize, //width
-      sizes.sliderW.height * 1.2, //height
-      colors.sliderCol, //color
-      downloadKML, //callback
-      colors.buttonText
-    ); //textcolor
+    if (!external) {
+      lastElt = gui.createButton(
+        "kmlButton",
+        "KML", //text value
+        lastElt.x, //x
+        lastElt.y + lastElt.height + sizes.shadowSize * 2, //y
+        thirdSize, //width
+        sizes.sliderW.height * 1.2, //height
+        colors.sliderCol, //color
+        downloadKML, //callback
+        colors.buttonText
+      ); //textcolor
 
-    lastElt = gui.createButton(
-      "csvButton",
-      "CSV", //text value
-      lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
-      lastElt.y, //y
-      thirdSize, //width
-      sizes.sliderW.height * 1.2, //height
-      colors.sliderCol, //color
-      downloadCsv, //callback
-      colors.buttonText
-    ); //textcolor
+      lastElt = gui.createButton(
+        "csvButton",
+        "CSV", //text value
+        lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
+        lastElt.y, //y
+        thirdSize, //width
+        sizes.sliderW.height * 1.2, //height
+        colors.sliderCol, //color
+        downloadCsv, //callback
+        colors.buttonText
+      ); //textcolor
 
-    lastElt = gui.createButton(
-      "jsonButton",
-      "JSON", //text value
-      lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
-      lastElt.y, //y
-      thirdSize, //width
-      sizes.sliderW.height * 1.2, //height
-      colors.sliderCol, //color
-      downloadJson, //callback
-      colors.buttonText
-    ); //textcolor
+      lastElt = gui.createButton(
+        "jsonButton",
+        "JSON", //text value
+        lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
+        lastElt.y, //y
+        thirdSize, //width
+        sizes.sliderW.height * 1.2, //height
+        colors.sliderCol, //color
+        downloadJson, //callback
+        colors.buttonText
+      ); //textcolor
+    }
 
     ////////// Help button
 
     gui.createButton(
       "helpButton",
       "Help", //text value
-      lastElt.x - lastElt.width - sizes.shadowSize * 2, //x
+      gui_elts.sideBar.x + sizes.margin + thirdSize + sizes.shadowSize * 2, //x
       lastElt.y + lastElt.height + sizes.shadowSize * 2 + sizes.textMargin, //y
       thirdSize, //width
       sizes.sliderW.height * 1.2, //height
