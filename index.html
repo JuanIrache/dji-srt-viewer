@@ -98,10 +98,14 @@
         margin-top: 8px;
         margin-bottom: 8px;
       }
-      h4 {
+      h4,
+      h5 {
         text-align: center;
         margin-top: 15px;
         margin-bottom: 8px;
+      }
+      hr {
+        margin: 10px 0;
       }
       p {
         font-size: 15px;
@@ -147,7 +151,7 @@
           <h4>
             To use the data in After Effects, get the
             <a href="https://goprotelemetryextractor.com#dji"
-              >Telemetry Overlay here</a
+              >Telemetry Overlay</a
             >
           </h4>
           <hr />
@@ -155,14 +159,7 @@
           <p>
             Turn on Video Captions in your camera settings within the DJI Go4
             App and you will find SRT files alongside your movie clips. You can
-            use this tool to interpret those files.
-          </p>
-          <p>
-            The data included in some drones (Mavic Pro) is not as accurate as
-            the drone could produce, but since that is all we have we decided to
-            apply smoothing to it to and produce a more meaningful
-            interpretation of your flights. This is not necessarily more
-            accurate.
+            use this tool to load, view, interpret and convert those files.
           </p>
           <p>
             You can tweak smoothness, load satellite or maps of the location,
@@ -170,34 +167,50 @@
             moments/places, export your data to other formats or launch Google
             Maps exactly where you shot something.
           </p>
+          <h4>Mavic Pro</h4>
           <p>
-            Phantom 4 Pro (P4P) files have embedded subtitles instead of SRT
-            files. You can extract the SRT data with
+            The Mavic Pro (first version) data is not as accurate as it could
+            be, so you can apply smoothing to it to and produce a more
+            meaningful interpretation of your flights. This is not necessarily
+            more accurate.
+          </p>
+          <h4>Phantom 4 Pro</h4>
+          <p>
+            P4P files have embedded subtitles instead of SRT files. You can
+            extract the SRT data with
             <a href="./srt-extractor/srt-extractor.zip">this script</a>.
           </p>
           <p>
             You can also load GPS data in other formats, such as GPX, KML, JSON
             and GeoJSON. This is experimental, so let me know if your files do
-            not display correctly. To load GoPro Metadata, you can extract it
-            first using the
+            not display correctly.
+          </p>
+          <h4>GoPro Telemetry</h4>
+          <p>
+            To load GoPro Metadata, you can extract it first using the
             <a href="https://goprotelemetryextractor.com/free"
-              >GoPro Telemetry Extractor</a
-            >.
+              >GoPro Telemetry Extractor Lite</a
+            >
+            or the
+            <a href="https://goprotelemetryextractor.com"
+              >GoPro Telemetry Extractor Premium</a
+            >
+            for more features and better performance.
           </p>
+          <hr />
+          <h4>
+            Created by
+            <a href="https://prototyping.barcelona/" target="_blank"
+              >App Prototyping Barcelona</a
+            >
+          </h4>
           <p>
-            Note that so far this has mostly been tested with Mavic Pro SRT
-            files. Bugs are to be expected.
-          </p>
-          <p>
-            Please get in touch
+            For assistance, reporting bugs or suggesting features, get in touch
             <a
               href="https://forum.dji.com/thread-140031-1-1.html"
               target="blank"
               >here</a
-            >
-            if you tried your drone SRT files and got no results. You can also
-            suggest new features or share with us what you created with this
-            tool.
+            >.
           </p>
           <p>
             Source code
@@ -208,12 +221,6 @@
             >.
           </p>
           <p>Built with <a href="https://p5js.org" target="_blank">P5js</a>.</p>
-          <p>
-            If you liked this tool you might like some of my
-            <a href="https://prototyping.barcelona/" target="_blank"
-              >app prototyping</a
-            >.
-          </p>
         </div>
       </div>
     </div>

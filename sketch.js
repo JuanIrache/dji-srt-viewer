@@ -336,7 +336,7 @@ var s = function(p) {
 
     lastElt = gui.createText(
       "topHint",
-      "Load DJI SRT logs. Scroll down for more info", //value
+      "Load DJI SRT logs (and more GPS path formats)", //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       gui_elts.sideBar.y + sizes.textMargin, //y
       sizes.textSize * 0.7, //height
