@@ -2,7 +2,7 @@
 
 Visualizes DJI SRT logs
 
-Try it live here: http://tailorandwayne.com/dji-srt-viewer/
+Try it live here: http://djitelemetryoverlay.com/srt-viewer/
 
 Uses P5js (https://p5js.org/) in Instance mode (https://github.com/processing/p5.js/wiki/Global-and-instance-mode) and the following NPM modules
 
