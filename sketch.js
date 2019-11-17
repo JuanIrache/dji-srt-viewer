@@ -367,7 +367,7 @@ var s = function(p) {
       "fileName",
       getFileName(), //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
-      lastElt.y + lastElt.height + sizes.textMargin, //y
+      lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
       colors.textCol, //bg color
       () => {}, //callback, do nothing
@@ -455,7 +455,7 @@ var s = function(p) {
       "bgText",
       "Background", //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
-      lastElt.y + lastElt.height + sizes.textMargin, //y
+      lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
       colors.textCol, //bg color
       () => {}, //callback, do nothing
@@ -481,7 +481,7 @@ var s = function(p) {
       "gMapsText",
       "See location in", //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
-      lastElt.y + lastElt.height + sizes.textMargin, //y
+      lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
       colors.textCol, //bg color
       () => {}, //callback, do nothing
@@ -505,7 +505,7 @@ var s = function(p) {
       "dlsText",
       "Download", //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
-      lastElt.y + lastElt.height + sizes.textMargin, //y
+      lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
       colors.textCol, //bg color
       () => {}, //callback, do nothing
