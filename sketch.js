@@ -596,6 +596,20 @@ var s = function(p) {
       colors.buttonText
     ); //textcolor
 
+    ////////// Help button
+
+    gui.createButton(
+      "helpButton",
+      "Help", //text value
+      lastElt.x - lastElt.width - sizes.shadowSize * 2, //x
+      lastElt.y + lastElt.height + sizes.shadowSize * 2 + sizes.textMargin, //y
+      thirdSize, //width
+      sizes.sliderW.height * 1.2, //height
+      colors.sliderCol, //color
+      pressHelp, //callback
+      colors.buttonText
+    ); //textcolor
+
     //////////
 
     let labelsOffset = (gui_elts.sideBar.width - sizes.margin * 4) / 3;
@@ -1211,6 +1225,10 @@ var s = function(p) {
 
   function downloadJson() {
     p.save([DJIData.toGeoJSON()], getFileName(), "JSON");
+  }
+
+  function pressHelp() {
+    p.select("#help").elt.click();
   }
 
   function downloadKML() {
