@@ -1,21 +1,23 @@
-"use strict";
+'use strict';
 
 var s = function(p) {
   //p5js functions
-  const DJISRTParser = require("dji_srt_parser"),
-    conversions = require("latlon_to_xy"),
-    helper = require("./local_modules/helper"),
-    map = require("mapbox_static_helper"),
-    mapBoxToken = require("./keys/mapBoxToken"), //token for mapbox
-    mapImages = require("./local_modules/map_drawer"),
-    createPlayer = require("./local_modules/create_player"),
-    visual_setup = require("./local_modules/visual_setup"),
-    gui = require("p5_gui"),
-    togeojson = require("@mapbox/togeojson"),
-    DOMParser = require("xmldom").DOMParser,
-    prepareGeoJSON = require("./local_modules/prepareGeoJSON"),
-    tokml = require("tokml"),
-    togpx = require("togpx");
+  const DJISRTParser = require('dji_srt_parser'),
+    conversions = require('latlon_to_xy'),
+    helper = require('./local_modules/helper'),
+    map = require('mapbox_static_helper'),
+    mapBoxToken = require('./keys/mapBoxToken'), //token for mapbox
+    mapImages = require('./local_modules/map_drawer'),
+    createPlayer = require('./local_modules/create_player'),
+    visual_setup = require('./local_modules/visual_setup'),
+    gui = require('p5_gui'),
+    togeojson = require('@mapbox/togeojson'),
+    DOMParser = require('xmldom').DOMParser,
+    fromText = require('./local_modules/fromText'),
+    prepareGeoJSON = require('./local_modules/prepareGeoJSON'),
+    tokml = require('tokml'),
+    togpx = require('togpx');
+
   let preferences,
     colors,
     DJIData,
@@ -32,7 +34,7 @@ var s = function(p) {
 
   p.preload = function() {
     let urlParam = function(name) {
-      var results = new RegExp("[?&]" + name + "=([^&#]*)").exec(
+      var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(
         window.location.href
       );
       if (results == null) {
@@ -41,10 +43,10 @@ var s = function(p) {
         return decodeURI(results[1]) || 0;
       }
     };
-    let source = urlParam("source");
+    let source = urlParam('source');
     function loadDemo() {
       helper.preloadFile(
-        "./samples/sample" + Math.floor(Math.random() * 5) + ".SRT",
+        './samples/sample' + Math.floor(Math.random() * 5) + '.SRT',
         confirm
       );
     }
@@ -57,7 +59,7 @@ var s = function(p) {
     if (source != null) {
       if (/\.gpx$/.test(source)) {
         fetch(source, {
-          method: "GET"
+          method: 'GET'
         })
           .then(function(response) {
             return response.text();
@@ -65,23 +67,23 @@ var s = function(p) {
           .then(str => {
             if (str == null || str.length < 3) {
               alternative(
-                "File not found. If you were using the GoPro Telemetry Extractor, this means your file was deleted from our server to preserve your privacy. You can load the file again from the GoPro Telemetry Extractor or download it in GPX to use it later."
+                'File not found. If you were using the GoPro Telemetry Extractor, this means your file was deleted from our server to preserve your privacy. You can load the file again from the GoPro Telemetry Extractor or download it in GPX to use it later.'
               )();
             } else {
               confirm(
-                { data: str, name: source.split("/").pop() },
-                alternative("Error loading file"),
+                { data: str, name: source.split('/').pop() },
+                alternative('Error loading file'),
                 true
               );
             }
           })
           .catch(error => {
             alternative(
-              "Error loading file. Please check that your file is available."
+              'Error loading file. Please check that your file is available.'
             )();
           });
       } else {
-        alternative("File type not supported")();
+        alternative('File type not supported')();
       }
     } else {
       loadDemo();
@@ -139,10 +141,10 @@ var s = function(p) {
       //check that mercator conversions are working right
       let x = p.random(-180, 180);
       if (Math.abs(x - conversions.lonToX(conversions.xToLon(x))) > 1)
-        console.error("error x: " + x);
+        console.error('error x: ' + x);
       let y = p.random(-85, 85);
       if (Math.abs(y - conversions.latToY(conversions.yToLat(y))) > 1)
-        console.error("error y: " + y);
+        console.error('error y: ' + y);
     }
     return zoom;
   }
@@ -169,9 +171,9 @@ var s = function(p) {
 
   function displayError() {
     if (gui_elts && gui_elts.topHint) {
-      gui_elts.topHint.setValue("Sorry. File not supported.");
+      gui_elts.topHint.setValue('Sorry. File not supported.');
     } else {
-      console.error("There was an error loading file");
+      console.error('There was an error loading file');
     }
   }
 
@@ -183,8 +185,8 @@ var s = function(p) {
   }
 
   let decode = function(d) {
-    if (typeof d === "string" && d.split(",")[0].includes("base64")) {
-      return atob(d.split(",")[1]);
+    if (typeof d === 'string' && d.split(',')[0].includes('base64')) {
+      return atob(d.split(',')[1]);
     } else {
       return d;
     }
@@ -201,27 +203,30 @@ var s = function(p) {
     try {
       if (f.data && f.name) {
         let preDJIData;
-        if (hasExtension(f.name, ".SRT")) {
+        if (hasExtension(f.name, '.SRT')) {
           preDJIData = DJISRTParser(f.data, f.name);
         } else if (
-          hasExtension(f.name, ".JSON") ||
-          hasExtension(f.name, ".GEOJSON")
+          hasExtension(f.name, '.JSON') ||
+          hasExtension(f.name, '.GEOJSON')
         ) {
           preDJIData = DJISRTParser(
             prepareGeoJSON(decode(f.data)),
             f.name,
             true
           );
-        } else if (hasExtension(f.name, ".KML")) {
+        } else if (hasExtension(f.name, '.KML')) {
           var kml = new DOMParser().parseFromString(decode(f.data));
-          var element = kml.getElementsByTagName("Style"),
+          var element = kml.getElementsByTagName('Style'),
             index;
           for (index = element.length - 1; index >= 0; index--) {
             element[index].parentNode.removeChild(element[index]);
           }
           var converted = togeojson.kml(kml);
           preDJIData = DJISRTParser(prepareGeoJSON(converted), f.name, true);
-        } else if (hasExtension(f.name, ".GPX")) {
+        } else if (hasExtension(f.name, '.text')) {
+          var converted = fromText(f.data);
+          preDJIData = DJISRTParser(converted, f.name);
+        } else if (hasExtension(f.name, '.GPX')) {
           var gpx = new DOMParser().parseFromString(decode(f.data));
           var converted = togeojson.gpx(gpx);
           ///hack to extract GoPro speeds
@@ -233,7 +238,7 @@ var s = function(p) {
           let speeds3D, speeds2D;
           if (matches) {
             speeds3D = matches.map(
-              m => +m.replace(/<gpxtpx:speed>([\d.]+)<\/gpxtpx:speed>/, "$1")
+              m => +m.replace(/<gpxtpx:speed>([\d.]+)<\/gpxtpx:speed>/, '$1')
             );
           }
 
@@ -241,7 +246,7 @@ var s = function(p) {
             matches = decode(f.data).match(speed3DREbis);
             if (matches) {
               speeds3D = matches.map(
-                m => +m.replace(/3dSpeed:\s?([\d.]+)/, "$1")
+                m => +m.replace(/3dSpeed:\s?([\d.]+)/, '$1')
               );
             }
           }
@@ -249,7 +254,7 @@ var s = function(p) {
           matches = decode(f.data).match(speed2DRE);
           if (matches) {
             speeds2D = matches.map(
-              m => +m.replace(/2dSpeed:\s?([\d.]+)/, "$1")
+              m => +m.replace(/2dSpeed:\s?([\d.]+)/, '$1')
             );
           }
           //
@@ -260,7 +265,7 @@ var s = function(p) {
           );
         }
         if (preDJIData == null) {
-          onError("No data");
+          onError('No data');
         } else if (isDataValid(preDJIData)) {
           external = isExternal;
           DJIData = preDJIData;
@@ -271,10 +276,10 @@ var s = function(p) {
           dataLoaded = true;
           mapImages.refresh(map, p, true);
         } else {
-          onError("Data not valid");
+          onError('Data not valid');
         }
       } else {
-        onError("File missing");
+        onError('File missing');
       }
     } catch (error) {
       onError(error);
@@ -285,7 +290,7 @@ var s = function(p) {
     let lastElt;
     gui_elts = gui.getGuiElts();
     lastElt = gui.createArea(
-      "topMap",
+      'topMap',
       0, //x
       0, //y
       sizes.mainW.width, //width
@@ -295,7 +300,7 @@ var s = function(p) {
     ); //callback
 
     lastElt = gui.createArea(
-      "frontMap",
+      'frontMap',
       0, //x
       sizes.mainW.height + sizes.sliderW.height, //y
       sizes.bottomW.width, //width
@@ -305,7 +310,7 @@ var s = function(p) {
     ); //callback
 
     lastElt = gui.createArea(
-      "timelineBg", //semi-transparent background for when play button is pressed
+      'timelineBg', //semi-transparent background for when play button is pressed
       0, //x
       sizes.mainW.height, //y
       sizes.mainW.width, //width
@@ -315,9 +320,9 @@ var s = function(p) {
     ); //callback, do nothing
 
     lastElt = gui.createToggle(
-      "playToggle",
+      'playToggle',
       true, //value
-      "►", //text
+      '►', //text
       0, //x
       sizes.mainW.height, //y
       sizes.play, //width
@@ -328,7 +333,7 @@ var s = function(p) {
     ); //textcolor
 
     lastElt = gui.createArea(
-      "sideBar", //semi-transparent background for when play button is pressed
+      'sideBar', //semi-transparent background for when play button is pressed
       sizes.mainW.width, //x
       0, //y
       sizes.sidebarW.width, //width
@@ -338,7 +343,7 @@ var s = function(p) {
     ); //callback, do nothing
 
     lastElt = gui.createSlider(
-      "playSlider",
+      'playSlider',
       player.getIndex(), //value
       sizes.play, //x
       sizes.mainW.height, //y
@@ -351,8 +356,8 @@ var s = function(p) {
     ); //max
 
     lastElt = gui.createText(
-      "topHint",
-      "Load DJI SRT logs (and more GPS path formats)", //value
+      'topHint',
+      'Load DJI SRT logs (and more GPS path formats)', //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       gui_elts.sideBar.y + sizes.textMargin, //y
       sizes.textSize * 0.7, //height
@@ -363,8 +368,8 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createButton(
-      "loadButton",
-      "LOAD", //text value
+      'loadButton',
+      'LOAD', //text value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 3, //x
       lastElt.y + lastElt.height + sizes.textMargin, //y
       gui_elts.sideBar.width / 3, //width
@@ -375,7 +380,7 @@ var s = function(p) {
     ); //textcolor
 
     lastElt = gui.createText(
-      "fileName",
+      'fileName',
       getFileName(), //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
@@ -387,7 +392,7 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createText(
-      "dateTime",
+      'dateTime',
       helper.formatDate(DJIData.metadata().stats.DATE), //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin, //y
@@ -399,7 +404,7 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createText(
-      "distance",
+      'distance',
       helper.formatDistance(
         DJIData.metadata().packets[0].DISTANCE,
         DJIData.metadata().stats.DISTANCE
@@ -414,7 +419,7 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createText(
-      "coordinates",
+      'coordinates',
       helper.formatCoordinates(DJIData.metadata().packets[0].GPS),
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin, //y
@@ -426,7 +431,7 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createText(
-      "camera",
+      'camera',
       helper.formatCamera(DJIData.metadata().packets[0]),
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin, //y
@@ -438,8 +443,8 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createText(
-      "smoothText",
-      "Smoothing",
+      'smoothText',
+      'Smoothing',
       gui_elts.sideBar.x + sizes.margin, //x
       lastElt.y + lastElt.height + sizes.textMargin, //y
       sizes.textSize, //height
@@ -450,7 +455,7 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createSlider(
-      "smoothSlider",
+      'smoothSlider',
       DJIData.getSmoothing(), //value
       gui_elts.smoothText.x + gui_elts.smoothText.width + sizes.margin, //x
       gui_elts.smoothText.y, //y
@@ -463,8 +468,8 @@ var s = function(p) {
     ); //max
 
     lastElt = gui.createText(
-      "bgText",
-      "Background", //value
+      'bgText',
+      'Background', //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
@@ -475,7 +480,7 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createRadio(
-      "mapRadio",
+      'mapRadio',
       map.getStyle(), //value
       preferences.mapRange, //values
       preferences.mapLabels, //texts
@@ -489,8 +494,8 @@ var s = function(p) {
     ); //textcolor
 
     lastElt = gui.createText(
-      "gMapsText",
-      "See location in", //value
+      'gMapsText',
+      'See location in', //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
@@ -501,8 +506,8 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createButton(
-      "gMapsButton",
-      "Google Maps", //text value
+      'gMapsButton',
+      'Google Maps', //text value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 4, //x
       lastElt.y + lastElt.height + sizes.textMargin, //y
       gui_elts.sideBar.width / 2, //width
@@ -513,8 +518,8 @@ var s = function(p) {
     ); //textcolor
 
     lastElt = gui.createText(
-      "dlsText",
-      "Download", //value
+      'dlsText',
+      'Download', //value
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
@@ -531,8 +536,8 @@ var s = function(p) {
 
     if (!external) {
       lastElt = gui.createButton(
-        "mgjsonButton",
-        "After Effects", //text value
+        'mgjsonButton',
+        'After Effects', //text value
         gui_elts.sideBar.x + sizes.margin, //x
         lastElt.y + lastElt.height + sizes.textMargin, //y
         halfSize, //width
@@ -543,8 +548,8 @@ var s = function(p) {
       ); //textcolor
 
       gui.createButton(
-        "gpxButton",
-        "GPX", //text value
+        'gpxButton',
+        'GPX', //text value
         lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
         lastElt.y, //y
         halfSize, //width
@@ -558,8 +563,8 @@ var s = function(p) {
     let flexibleMargin = external ? sizes.textMargin : sizes.shadowSize * 2;
 
     lastElt = gui.createButton(
-      "photoButton",
-      "Photo", //text value
+      'photoButton',
+      'Photo', //text value
       gui_elts.sideBar.x + sizes.margin, //x
       lastElt.y + lastElt.height + flexibleMargin, //y
       halfSize, //width
@@ -570,8 +575,8 @@ var s = function(p) {
     ); //textcolor
 
     gui.createButton(
-      "recordButton",
-      "Video", //text value
+      'recordButton',
+      'Video', //text value
       lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
       lastElt.y, //y
       halfSize, //width
@@ -583,8 +588,8 @@ var s = function(p) {
 
     if (!external) {
       lastElt = gui.createButton(
-        "kmlButton",
-        "KML", //text value
+        'kmlButton',
+        'KML', //text value
         lastElt.x, //x
         lastElt.y + lastElt.height + sizes.shadowSize * 2, //y
         thirdSize, //width
@@ -595,8 +600,8 @@ var s = function(p) {
       ); //textcolor
 
       lastElt = gui.createButton(
-        "csvButton",
-        "CSV", //text value
+        'csvButton',
+        'CSV', //text value
         lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
         lastElt.y, //y
         thirdSize, //width
@@ -607,8 +612,8 @@ var s = function(p) {
       ); //textcolor
 
       lastElt = gui.createButton(
-        "jsonButton",
-        "JSON", //text value
+        'jsonButton',
+        'JSON', //text value
         lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
         lastElt.y, //y
         thirdSize, //width
@@ -622,8 +627,8 @@ var s = function(p) {
     ////////// Help button
 
     gui.createButton(
-      "helpButton",
-      "Help", //text value
+      'helpButton',
+      'Help', //text value
       gui_elts.sideBar.x + sizes.margin + thirdSize + sizes.shadowSize * 2, //x
       lastElt.y + lastElt.height + sizes.shadowSize * 2 + sizes.textMargin, //y
       thirdSize, //width
@@ -637,8 +642,8 @@ var s = function(p) {
 
     let labelsOffset = (gui_elts.sideBar.width - sizes.margin * 4) / 3;
     lastElt = gui.createText(
-      "heightText",
-      "Height", //value
+      'heightText',
+      'Height', //value
       gui_elts.sideBar.x + sizes.margin * 1 + labelsOffset * 0, //x
       gui_elts.topMap.height, //y
       sizes.textSize, //height
@@ -649,8 +654,8 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createText(
-      "vertSpeedText",
-      "Vert. S.", //value
+      'vertSpeedText',
+      'Vert. S.', //value
       gui_elts.sideBar.x + sizes.margin * 2 + labelsOffset * 1, //x
       gui_elts.topMap.height, //y
       sizes.textSize, //height
@@ -661,8 +666,8 @@ var s = function(p) {
     ); //text style
 
     lastElt = gui.createText(
-      "thwoDSpeedText",
-      "2D Speed", //value
+      'thwoDSpeedText',
+      '2D Speed', //value
       gui_elts.sideBar.x + sizes.margin * 3 + labelsOffset * 2, //x
       gui_elts.topMap.height, //y
       sizes.textSize, //height
@@ -684,31 +689,31 @@ var s = function(p) {
     p.noStroke();
     p.textAlign(p.CENTER, p.BOTTOM);
     p.textSize(sizes.textSize * 0.8);
-    if (map.getStyle() != "none") {
+    if (map.getStyle() != 'none') {
       p.text(
-        "djitelemetryoverlay.com | Map images: © Mapbox, © OpenStreetMap",
+        'djitelemetryoverlay.com | Map images: © Mapbox, © OpenStreetMap',
         p.width / 2,
         p.height - 1
       );
     } else {
-      p.text("djitelemetryoverlay.com", p.width / 2, p.height - 1);
+      p.text('djitelemetryoverlay.com', p.width / 2, p.height - 1);
     }
-    p.save(can, getFileName() + "-" + player.getIndex(), "png");
+    p.save(can, getFileName() + '-' + player.getIndex(), 'png');
   }
 
   function record() {
     var stream = can.canvas.captureStream();
-    let options = { mimeType: "video/webm" };
+    let options = { mimeType: 'video/webm' };
     var mediaRecorder,
       recordedBlobs = [];
 
     function download() {
-      const blob = new Blob(recordedBlobs, { type: "video/webm" });
+      const blob = new Blob(recordedBlobs, { type: 'video/webm' });
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.style.display = "none";
+      const a = document.createElement('a');
+      a.style.display = 'none';
       a.href = url;
-      a.download = getFileName() + "-map.webm";
+      a.download = getFileName() + '-map.webm';
       document.body.appendChild(a);
       a.click();
       setTimeout(() => {
@@ -724,25 +729,25 @@ var s = function(p) {
     try {
       mediaRecorder = new MediaRecorder(stream, options);
     } catch (e0) {
-      console.error("Unable to create MediaRecorder with options Object: ", e0);
+      console.error('Unable to create MediaRecorder with options Object: ', e0);
       try {
-        options = { mimeType: "video/webm,codecs=vp9" };
+        options = { mimeType: 'video/webm,codecs=vp9' };
         mediaRecorder = new MediaRecorder(stream, options);
       } catch (e1) {
         console.error(
-          "Unable to create MediaRecorder with options Object: ",
+          'Unable to create MediaRecorder with options Object: ',
           e1
         );
         try {
-          options = { mimeType: "video/vp8" }; // Chrome 47
+          options = { mimeType: 'video/vp8' }; // Chrome 47
           mediaRecorder = new MediaRecorder(stream, options);
         } catch (e2) {
           alert(
-            "MediaRecorder is not supported by this browser.\n\n" +
-              "Try Firefox 29 or later, or Chrome 47 or later, " +
-              "with Enable experimental Web Platform features enabled from chrome://flags."
+            'MediaRecorder is not supported by this browser.\n\n' +
+              'Try Firefox 29 or later, or Chrome 47 or later, ' +
+              'with Enable experimental Web Platform features enabled from chrome://flags.'
           );
-          console.error("Exception while creating MediaRecorder:", e2);
+          console.error('Exception while creating MediaRecorder:', e2);
           return;
         }
       }
@@ -752,7 +757,7 @@ var s = function(p) {
 
     player.playOnce().then(() => mediaRecorder.stop());
     mediaRecorder.start(100);
-    console.log("Recording");
+    console.log('Recording');
   }
 
   p.setup = function() {
@@ -762,7 +767,7 @@ var s = function(p) {
     sizes = visual_setup.setSizes();
     gui.setup(p, sizes.shadowSize, colors.shadowOpacity);
     can = p.createCanvas(p.windowWidth, p.windowHeight);
-    let topOfPage = p.select("#p");
+    let topOfPage = p.select('#p');
     can.parent(topOfPage);
     p.noFill();
     p.colorMode(p.HSB);
@@ -770,9 +775,9 @@ var s = function(p) {
     p.imageMode(p.CENTER);
     p.strokeCap(p.SQUARE);
     p.rectMode(p.CORNER);
-    var parent = document.getElementById("container1");
-    var child = document.getElementById("container2");
-    child.style.paddingRight = child.offsetWidth - child.clientWidth + "px";
+    var parent = document.getElementById('container1');
+    var child = document.getElementById('container2');
+    child.style.paddingRight = child.offsetWidth - child.clientWidth + 'px';
   };
 
   p.windowResized = function() {
@@ -795,12 +800,12 @@ var s = function(p) {
         gui_elts[elt].mouseIsPressed(p.mouseIsPressed, p.mouseX, p.mouseY);
         if (gui_elts[elt] === gui_elts.topMap) {
           gui_elts[elt].mouseOver(p.mouseX, p.mouseY, (x, y) => {
-            selectItem(x, y, false, "top", false);
+            selectItem(x, y, false, 'top', false);
             mouseOverMaps = true;
           });
         } else if (gui_elts[elt] === gui_elts.frontMap) {
           gui_elts[elt].mouseOver(p.mouseX, p.mouseY, (x, y) => {
-            selectItem(x, y, false, "front", false);
+            selectItem(x, y, false, 'front', false);
             mouseOverMaps = true;
           });
         } else if (gui_elts[elt] === gui_elts.playSlider) {
@@ -1021,7 +1026,7 @@ var s = function(p) {
     p.textSize(sizes.textSize * 0.8);
     p.textStyle(p.BOLD);
     p.textAlign(p.CENTER, p.CENTER);
-    p.text("H", 0, 0);
+    p.text('H', 0, 0);
     p.noFill();
     p.strokeWeight(sizes.strokes);
     p.stroke(0, 90, 85, colors.lineAlp);
@@ -1039,9 +1044,9 @@ var s = function(p) {
     p.textStyle(p.NORMAL);
     p.textAlign(p.LEFT, p.TOP);
     if (mp == gui_elts.frontMap) {
-      p.text("Front View", sizes.shadowSize, sizes.shadowSize);
+      p.text('Front View', sizes.shadowSize, sizes.shadowSize);
     } else if ((mp = gui_elts.topMap)) {
-      p.text("Top View", sizes.shadowSize, sizes.shadowSize);
+      p.text('Top View', sizes.shadowSize, sizes.shadowSize);
     }
     p.pop();
   }
@@ -1148,11 +1153,11 @@ var s = function(p) {
     p.textAlign(p.LEFT, p.CENTER);
     p.noStroke();
     p.textSize(sizes.textSize * 0.7); //save somewhere?
-    p.text(alt + " " + units, sizes.margin, y);
+    p.text(alt + ' ' + units, sizes.margin, y);
     if (Math.abs(y - min) > sizes.textSize * 0.7)
-      p.text(mAlt + " " + units, sizes.margin, min); //draw max and min values if not really close to current
+      p.text(mAlt + ' ' + units, sizes.margin, min); //draw max and min values if not really close to current
     if (Math.abs(y - max) > sizes.textSize * 0.7)
-      p.text(mMin + " " + units, sizes.margin, max);
+      p.text(mMin + ' ' + units, sizes.margin, max);
   }
 
   function heightPointer(pck, min, max, stats) {
@@ -1177,7 +1182,7 @@ var s = function(p) {
       thick,
       stats,
       color,
-      "m"
+      'm'
     );
   }
 
@@ -1200,7 +1205,7 @@ var s = function(p) {
     let color = p.color(tone, 100, colors.lineBri / 2);
     let mMin = p.nf(statsType.min, 1, 2);
     let mAlt = p.nf(statsType.max, 1, 2);
-    drawLegend(min, max, y, alt, mAlt, mMin, thick, stats, color, "km/h");
+    drawLegend(min, max, y, alt, mAlt, mMin, thick, stats, color, 'km/h');
   }
 
   function drawGraph(pck, elt) {
@@ -1235,32 +1240,32 @@ var s = function(p) {
   }
 
   function getFileName() {
-    return DJIData.getFileName().replace(/\.(srt|SRT)/, "");
+    return DJIData.getFileName().replace(/\.(srt|SRT)/, '');
   }
 
   function downloadCsv() {
-    p.save([DJIData.toCSV(false)], getFileName(), "CSV");
+    p.save([DJIData.toCSV(false)], getFileName(), 'CSV');
   }
 
   function downloadMgjson() {
-    p.save([JSON.stringify(DJIData.toMGJSON())], getFileName(), "MGJSON");
+    p.save([JSON.stringify(DJIData.toMGJSON())], getFileName(), 'MGJSON');
   }
 
   function downloadJson() {
-    p.save([DJIData.toGeoJSON()], getFileName(), "JSON");
+    p.save([DJIData.toGeoJSON()], getFileName(), 'JSON');
   }
 
   function pressHelp() {
-    p.select("#help").elt.click();
+    p.select('#help').elt.click();
   }
 
   function downloadKML() {
     let preKml = JSON.parse(DJIData.toGeoJSON());
     let timestamp = false;
     preKml.features.forEach(feature => {
-      if (feature.properties.hasOwnProperty("timestamp")) {
+      if (feature.properties.hasOwnProperty('timestamp')) {
         timestamp = true;
-        if (typeof feature.properties.timestamp !== "object")
+        if (typeof feature.properties.timestamp !== 'object')
           feature.properties.timestamp = new Date(
             feature.properties.timestamp
           ).toISOString();
@@ -1272,7 +1277,7 @@ var s = function(p) {
       ].properties.timestamp = preKml.features[
         preKml.features.length - 1
       ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
-      p.save([tokml(preKml)], getFileName(), "KML");
+      p.save([tokml(preKml)], getFileName(), 'KML');
     }
   }
 
@@ -1280,9 +1285,9 @@ var s = function(p) {
     let preGpx = JSON.parse(DJIData.toGeoJSON());
     let timestamp = false;
     preGpx.features.forEach(feature => {
-      if (feature.properties.hasOwnProperty("timestamp")) {
+      if (feature.properties.hasOwnProperty('timestamp')) {
         timestamp = true;
-        if (typeof feature.properties.timestamp !== "object")
+        if (typeof feature.properties.timestamp !== 'object')
           feature.properties.times = new Date(
             feature.properties.timestamp
           ).toISOString();
@@ -1295,9 +1300,9 @@ var s = function(p) {
         preGpx.features.length - 1
       ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
       p.save(
-        [togpx(preGpx, { creator: "dji-srt-viewer" })],
+        [togpx(preGpx, { creator: 'dji-srt-viewer' })],
         getFileName(),
-        "GPX"
+        'GPX'
       );
     }
   }
@@ -1312,12 +1317,12 @@ var s = function(p) {
 
   function clickTopMap(mxx, myy, tolerant) {
     //clicked in map variables relative to map
-    clickMap(mxx, myy, tolerant, "top");
+    clickMap(mxx, myy, tolerant, 'top');
   }
 
   function clickFrontMap(mxx, myy, tolerant) {
     //clicked in map variables relative to map
-    clickMap(mxx, myy, tolerant, "front");
+    clickMap(mxx, myy, tolerant, 'front');
   }
 
   function selectItem(mx, my, tolerant, type, commit) {
@@ -1390,16 +1395,16 @@ var s = function(p) {
     }
 
     let index;
-    if (type == "top") {
+    if (type == 'top') {
       index = selectFromMain(mx, my);
-    } else if (type == "front") {
+    } else if (type == 'front') {
       index = selectFromBottom(mx, my);
     }
     if (index != null) {
       if (commit) {
-        if (type == "top") {
+        if (type == 'top') {
           gui_elts.topMap.setClick(true);
-        } else if (type == "front") {
+        } else if (type == 'front') {
           gui_elts.frontMap.setClick(true);
         }
         player.setIndex(index);
@@ -1440,7 +1445,7 @@ var s = function(p) {
   };
 
   p.keyPressed = function(value) {
-    if (value.key == "f") {
+    if (value.key == 'f') {
       loadDialog();
     }
   };
