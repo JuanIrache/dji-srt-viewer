@@ -24,18 +24,28 @@ const toSrt = data => {
     l = l.replace(/[�]/g, '');
     l = l.trim();
     let clean = '';
-    for (i = 0; i < l.length; i++) {
-      if (l.charCodeAt(i) !== 0) {
-        clean += l[i];
+    for (let ii = 0; ii < l.length; ii++) {
+      if (l.charCodeAt(ii) !== 0) {
+        clean += l[ii];
       }
     }
     if (clean.length) {
       result.push(i + 1);
+      result.push(
+        new Date()
+          .toISOString()
+          .replace(/\d{2}:\d{2}:\d{2}.\d{3}Z/i, createTimecode(i))
+          .replace(/-/, '.')
+          .replace(/T/, ' ')
+          .replace(/,\d{3}/, '')
+      );
       result.push(`${createTimecode(i)} --> ${createTimecode(i + 1)}`);
       result.push(clean);
       result.push('');
     }
   });
+  console.log(result);
+
   return result.join('\n');
 };
 
