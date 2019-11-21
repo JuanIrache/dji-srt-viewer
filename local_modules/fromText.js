@@ -31,20 +31,19 @@ const toSrt = data => {
     }
     if (clean.length) {
       result.push(i + 1);
-      result.push(
-        new Date()
-          .toISOString()
-          .replace(/\d{2}:\d{2}:\d{2}.\d{3}Z/i, createTimecode(i))
-          .replace(/-/, '.')
-          .replace(/T/, ' ')
-          .replace(/,\d{3}/, '')
-      );
+      // result.push(
+      //   new Date()
+      //     .toISOString()
+      //     .replace(/\d{2}:\d{2}:\d{2}.\d{3}Z/i, createTimecode(i))
+      //     .replace(/-/, '.')
+      //     .replace(/T/, ' ')
+      //     .replace(/,\d{3}/, '')
+      // );
       result.push(`${createTimecode(i)} --> ${createTimecode(i + 1)}`);
       result.push(clean);
       result.push('');
     }
   });
-  console.log(result);
 
   return result.join('\n');
 };
