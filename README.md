@@ -15,6 +15,8 @@ Can be built with Browserify (https://www.npmjs.com/package/browserify) and Babe
 
 Discussion and suggestions here: https://forum.dji.com/thread-140031-1-1.html
 
+Example video created with this and After Effects: https://youtu.be/zAkUTOLmdmQ
+
 ## Build
 
 ```shell
