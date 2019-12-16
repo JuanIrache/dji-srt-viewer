@@ -65,7 +65,7 @@ var s = function(p) {
             return response.text();
           })
           .then(str => {
-            if (str == null || str.length < 3) {
+            if (str == null || str.length < 3 || JSON.parse(str).error) {
               alternative(
                 'File not found. If you were using the GoPro Telemetry Extractor, this means your file was deleted from our server to preserve your privacy. You can load the file again from the GoPro Telemetry Extractor or download it in GPX to use it later.'
               )();
