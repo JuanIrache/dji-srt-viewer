@@ -100,14 +100,18 @@ function helper() {
           let { files } = event.target;
           if (files && files.length) {
             var result = {};
-            if (files.length === 1) {
+            files = Array.from(files);
+            if (
+              files.length === 1 ||
+              //Only merge SRT files, for other formats, pick the first one
+              files.some(f => !f.name.match(/\.srt$/i))
+            ) {
               result.name = files[0].name;
               result.data = await readOneFile(files[0]).catch(e => {
                 confirm({});
               });
               confirm(result);
             } else {
-              files = Array.from(files);
               files.sort((a, b) => a.lastModified - b.lastModified);
               result.name = files.map(f => f.name).join('+');
               result.data = '';
