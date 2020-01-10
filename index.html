@@ -1,233 +1,207 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-45790897-10"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
 
-      gtag('config', 'UA-45790897-10');
-    </script>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      property="og:url"
-      content="https://djitelemetryoverlay.com/srt-viewer"
-    />
-    <meta
-      property="og:title"
-      content="DJI SRT Flight Data Viewer and Converter"
-    />
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:description"
-      content="Visualize the SRT flight data from your DJI drone (Mavic Pro, Mavic 2 [Pro/Zoom], Mavic Mini, Inspire, Matrice, 
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-45790897-10"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-45790897-10');
+  </script>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta property="og:url" content="https://djitelemetryoverlay.com/srt-viewer" />
+  <meta property="og:title" content="DJI SRT Flight Data Viewer and Converter" />
+  <meta property="og:type" content="website" />
+  <meta property="og:description"
+    content="Visualize the SRT flight data from your DJI drone (Mavic Pro, Mavic 2 [Pro/Zoom], Mavic Mini, Inspire, Matrice, 
       Phantom [3/4/Pro]) and other file formats (GPX, KML...) and convert them to other software: After Effects 
-      (mgJSON), Virb Edit (GPX), Google Earth (KML), Excel (CSV). Save your visualizations as photos and videos."
-    />
-    <meta
-      property="og:image"
-      content="https://djitelemetryoverlay.com/djiicon_margin_white.png"
-    />
-    <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="253" />
-    <meta property="og:image:height" content="253" />
-    <!--<meta property="fb:app_id" content="" />-->
-    <meta
-      name="description"
-      content="Visualize the SRT flight data from your DJI drone (Mavic Pro, Mavic 2 [Pro/Zoom], Mavic mini, Inspire, Matrice, 
+      (mgJSON), Virb Edit (GPX), Google Earth (KML), Excel (CSV). Save your visualizations as photos and videos." />
+  <meta property="og:image" content="https://djitelemetryoverlay.com/djiicon_margin_white.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="253" />
+  <meta property="og:image:height" content="253" />
+  <!--<meta property="fb:app_id" content="" />-->
+  <meta name="description"
+    content="Visualize the SRT flight data from your DJI drone (Mavic Pro, Mavic 2 [Pro/Zoom], Mavic mini, Inspire, Matrice, 
       Phantom [3/4/Pro]) and other file formats (GPX, KML...) and convert them to other software: After Effects 
-      (mgJSON), Virb Edit (GPX), Google Earth (KML), Excel (CSV). Save your visualizations as photos and videos"
-    />
+      (mgJSON), Virb Edit (GPX), Google Earth (KML), Excel (CSV). Save your visualizations as photos and videos" />
 
-    <title>DJI SRT Flight Data Viewer</title>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"
-      integrity="sha256-WVsM3xrcqyuFNF3W1qtIKbHFsD0977nDQA8DCMp1zCw="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"
-      integrity="sha256-2/3R3NV5zryj0fDjD3cDh+SNiWQ/TJiMVZzAo5FrhiU="
-      crossorigin="anonymous"
-    ></script>
-    <script src="bundle.js"></script>
-    <style>
-      * {
-        margin: 0;
-      }
-      #container1 {
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
-      }
-      #container2 {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        padding-right: 0px; /* exact value is given in JavaScript code */
-        scroll-behavior: smooth;
-      }
-      html,
-      body {
-        height: 100%;
-        overflow: hidden;
-      }
-      h1,
-      h3,
-      p {
-        font-family: Sans-serif;
-        text-align: center;
-        color: #555555;
-      }
-      h1 {
-        margin-top: 20px;
-        font-size: 30px;
-        margin-bottom: 5px;
-      }
-      h3 {
-        font-size: 20px;
-        margin-top: 8px;
-        margin-bottom: 8px;
-      }
-      h4,
-      h5 {
-        text-align: center;
-        margin-top: 15px;
-        margin-bottom: 8px;
-      }
-      hr {
-        margin: 10px 0;
-      }
-      p {
-        font-size: 15px;
-      }
-      .foot {
-        text-align: left;
-        font-size: 12px;
-      }
-      #text {
-        margin-top: 5px;
-        margin-bottom: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="container1">
-      <div id="container2">
-        <span id="p"></span>
-        <div id="text">
-          <a href="#help" id="help"></a>
-          <p class="foot">
-            Satellite and Map images created with: ©
-            <a href="https://www.mapbox.com/about/maps/">Mapbox</a> ©
-            <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
-            <strong
-              ><a href="https://www.mapbox.com/map-feedback/" target="_blank"
-                >Improve this map</a
-              ></strong
-            >
-          </p>
+  <title>DJI SRT Flight Data Viewer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"
+    integrity="sha256-WVsM3xrcqyuFNF3W1qtIKbHFsD0977nDQA8DCMp1zCw="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"
+    integrity="sha256-2/3R3NV5zryj0fDjD3cDh+SNiWQ/TJiMVZzAo5FrhiU="
+    crossorigin="anonymous"></script>
+  <script src="bundle.js"></script>
+  <style>
+    * {
+      margin: 0;
+    }
 
-          <h1>DJI SRT Flight Data Viewer</h1>
-          <h3>
-            Visualize the SRT flight data from your DJI drone (Mavic Pro, Mavic
-            2 [Pro/Zoom], Mavic mini, Phantom [3/4/Pro]), Inspire, Matrice
-            200...
-          </h3>
-          <p>
-            You can also load other file formats (GPX, KML...) and convert them
-            to other software: After Effects (mgJSON), Virb Edit (GPX), Google
-            Earth (KML), Excel (CSV). Save your visualizations as photos and
-            videos.
-          </p>
-          <h4>
-            To use the data in After Effects, get the
-            <a href="https://goprotelemetryextractor.com#dji"
-              >Telemetry Overlay</a
-            >
-          </h4>
-          <hr />
-          <h4>Instructions</h4>
-          <p>
-            Turn on Video Captions in your camera settings within the DJI Go4
-            App and you will find SRT files alongside your movie clips. You can
-            use this tool to load, view, interpret and convert those files.
-          </p>
-          <p>
-            You can tweak smoothness, load satellite or maps of the location,
-            drag over the graphs or timeline to view data in specific
-            moments/places, export your data to other formats or launch Google
-            Maps exactly where you shot something.
-          </p>
-          <h4>Mavic Pro</h4>
-          <p>
-            The Mavic Pro (first version) data is not as accurate as it could
-            be, so you can apply smoothing to it to and produce a more
-            meaningful interpretation of your flights. This is not necessarily
-            more accurate.
-          </p>
-          <h4>Mavic Mini, Phantom 4 Pro and Inspire 2</h4>
-          <p>
-            These drones do not produce a .SRT file, but they embed the
-            subtitles within the video file. Use the
-            <a href="../subtitle-extractor/" target="_blank"
-              >Subtitle Extractor</a
-            >
-            to convert them and then use them on this site.
-          </p>
-          <h4>Other formats</h4>
-          <p>
-            You can also load GPS data in other formats, such as GPX, KML, JSON
-            and GeoJSON. This is experimental, so let me know if your files do
-            not display correctly.
-          </p>
-          <h4>GoPro Telemetry</h4>
-          <p>
-            To load GoPro Metadata, you can extract it first using the
-            <a href="https://goprotelemetryextractor.com/free"
-              >GoPro Telemetry Extractor Lite</a
-            >
-            or the
-            <a href="https://goprotelemetryextractor.com"
-              >GoPro Telemetry Extractor Premium</a
-            >
-            for more features and better performance.
-          </p>
-          <hr />
-          <h4>
-            Created by
-            <a href="https://prototyping.barcelona/" target="_blank"
-              >App Prototyping Barcelona</a
-            >
-          </h4>
-          <p>
-            For assistance, reporting bugs or suggesting features, get in touch
-            <a
-              href="https://forum.dji.com/thread-140031-1-1.html"
-              target="blank"
-              >here</a
-            >.
-          </p>
-          <p>
-            Source code
-            <a
-              href="https://github.com/JuanIrache/dji-srt-viewer"
-              target="_blank"
-              >here</a
-            >.
-          </p>
-          <p>Built with <a href="https://p5js.org" target="_blank">P5js</a>.</p>
-        </div>
+    #container1 {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #container2 {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      padding-right: 0px;
+      /* exact value is given in JavaScript code */
+      scroll-behavior: smooth;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    h1,
+    h3,
+    p {
+      font-family: Sans-serif;
+      text-align: center;
+      color: #555555;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: 30px;
+      margin-bottom: 5px;
+    }
+
+    h3 {
+      font-size: 20px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    h4,
+    h5 {
+      text-align: center;
+      margin-top: 15px;
+      margin-bottom: 8px;
+    }
+
+    hr {
+      margin: 10px 0;
+    }
+
+    p {
+      font-size: 15px;
+    }
+
+    .foot {
+      text-align: left;
+      font-size: 12px;
+    }
+
+    #text {
+      margin-top: 5px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container1">
+    <div id="container2">
+      <span id="p"></span>
+      <div id="text">
+        <a href="#help" id="help"></a>
+        <p class="foot">
+          Satellite and Map images created with: ©
+          <a href="https://www.mapbox.com/about/maps/">Mapbox</a> ©
+          <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
+          <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this
+              map</a></strong>
+        </p>
+
+        <h1>DJI SRT Flight Data Viewer</h1>
+        <h3>
+          Visualize the SRT flight data from your DJI drone (Mavic Pro, Mavic
+          2 [Pro/Zoom], Mavic mini, Phantom [3/4/Pro]), Inspire, Matrice
+          200...
+        </h3>
+        <p>
+          You can also load other file formats (GPX, KML...) and convert them
+          to other software: After Effects (mgJSON), Virb Edit (GPX), Google
+          Earth (KML), Excel (CSV). Save your visualizations as photos and
+          videos.
+        </p>
+        <h4>
+          To use the data in After Effects, get the
+          <a href="https://goprotelemetryextractor.com#dji">Telemetry Overlay</a>
+        </h4>
+        <hr />
+        <h4>Instructions</h4>
+        <p>
+          Turn on Video Captions in your camera settings within the DJI Go4
+          App and you will find SRT files alongside your movie clips. You can
+          use this tool to load, view, interpret and convert those files.
+        </p>
+        <p>
+          You can tweak smoothness, load satellite or maps of the location,
+          drag over the graphs or timeline to view data in specific
+          moments/places, export your data to other formats or launch Google
+          Maps exactly where you shot something.
+        </p>
+        <h4>Mavic Pro</h4>
+        <p>
+          The Mavic Pro (first version) data is not as accurate as it could
+          be, so you can apply smoothing to it to and produce a more
+          meaningful interpretation of your flights. This is not necessarily
+          more accurate.
+        </p>
+        <h4>Mavic Mini, Phantom 4 Pro and Inspire 2</h4>
+        <p>
+          These drones do not produce a .SRT file, but they embed the
+          subtitles within the video file. Use the
+          <a href="../subtitle-extractor/" target="_blank">Subtitle Extractor</a>
+          to convert them and then use them on this site.
+        </p>
+        <h4>Other formats</h4>
+        <p>
+          You can also load GPS data in other formats, such as GPX, KML, JSON
+          and GeoJSON. This is experimental, so let me know if your files do
+          not display correctly.
+        </p>
+        <h4>GoPro Telemetry</h4>
+        <p>
+          To load GoPro Metadata, you can extract it first using the
+          <a href="https://goprotelemetryextractor.com/free">GoPro Telemetry Extractor Lite</a>
+          or the
+          <a href="https://goprotelemetryextractor.com">GoPro Telemetry Extractor Premium</a>
+          for more features and better performance.
+        </p>
+        <hr />
+        <h4>
+          Created by
+          <a href="https://prototyping.barcelona/" target="_blank">App Prototyping Barcelona</a>
+        </h4>
+        <p>
+          For assistance, reporting bugs or suggesting features, get in touch
+          <a href="https://forum.dji.com/thread-140031-1-1.html" target="blank">here</a>.
+        </p>
+        <p>
+          Source code
+          <a href="https://github.com/JuanIrache/dji-srt-viewer" target="_blank">here</a>.
+        </p>
+        <p>Built with <a href="https://p5js.org" target="_blank">P5js</a>.</p>
       </div>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
