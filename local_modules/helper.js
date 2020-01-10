@@ -88,6 +88,7 @@ function helper() {
       let input = p.createFileInput(confirm);
       input.hide();
       input.id('file-input');
+      input.attribute('multiple', 'multiple');
       document.getElementById('file-input').click();
     },
     launchGoogleMaps: function(lat, lon) {
