@@ -58,6 +58,15 @@ function helper() {
     );
   }
 
+  function readOneFile(file) {
+    return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.onload = event => resolve(event.target.result); // desired file content
+      reader.onerror = error => reject(error);
+      reader.readAsText(file); // you could also read images and other binaries
+    });
+  }
+
   return {
     formatCamera: function(pckt) {
       let phrase = [];
@@ -85,11 +94,31 @@ function helper() {
       );
     },
     loadDialog: function(p, confirm) {
-      let input = p.createFileInput(confirm);
-      input.hide();
-      input.id('file-input');
-      input.attribute('multiple', 'multiple');
-      document.getElementById('file-input').click();
+      document
+        .querySelector('#loadFiles')
+        .addEventListener('change', async event => {
+          let { files } = event.target;
+          if (files && files.length) {
+            var result = {};
+            if (files.length === 1) {
+              result.name = files[0].name;
+              result.data = await readOneFile(files[0]).catch(e => {
+                confirm({});
+              });
+              confirm(result);
+            } else {
+              files = Array.from(files);
+              files.sort((a, b) => a.lastModified - b.lastModified);
+              result.name = files.map(f => f.name).join('+');
+              result.data = '';
+              for (var i = 0; i < files.length; i++) {
+                result.data += await readOneFile(files[i]).catch(e => {});
+              }
+              confirm(result);
+            }
+          } else confirm({});
+        });
+      document.getElementById('loadFiles').click();
     },
     launchGoogleMaps: function(lat, lon) {
       function link(url, winName, options) {
