@@ -47,7 +47,15 @@ function helper() {
     var latitudeCardinal = lat >= 0 ? 'N' : 'S';
     var longitude = toDegreesMinutesAndSeconds(lng);
     var longitudeCardinal = lng >= 0 ? 'E' : 'W';
-    return latitude + ' ' + latitudeCardinal + ' ' + longitude + ' ' + longitudeCardinal;
+    return (
+      latitude +
+      ' ' +
+      latitudeCardinal +
+      ' ' +
+      longitude +
+      ' ' +
+      longitudeCardinal
+    );
   }
 
   return {
@@ -65,10 +73,16 @@ function helper() {
     formatDistance: function(curr, tot) {
       curr /= 1000;
       tot /= 1000;
-      return 'Disance: ' + doNf(curr, 1, 2) + ' km / ' + doNf(tot, 1, 2) + ' km';
+      return (
+        'Disance: ' + doNf(curr, 1, 2) + ' km / ' + doNf(tot, 1, 2) + ' km'
+      );
     },
     formatDate: function(date) {
-      return new Date(date).toLocaleDateString() + ' | ' + new Date(date).toLocaleTimeString();
+      return (
+        new Date(date).toLocaleDateString() +
+        ' | ' +
+        new Date(date).toLocaleTimeString()
+      );
     },
     loadDialog: function(p, confirm) {
       let input = p.createFileInput(confirm);
@@ -80,7 +94,8 @@ function helper() {
       function link(url, winName, options) {
         (winName && open(url, winName, options)) || (location = url);
       }
-      let url = 'https://www.google.com/maps/search/?api=1&query=' + lat + '%2C' + lon;
+      let url =
+        'https://www.google.com/maps/search/?api=1&query=' + lat + '%2C' + lon;
       link(url, '_blank');
     },
     preloadFile: function(file, cb) {
