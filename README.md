@@ -32,11 +32,13 @@ $ browserify sketch.js -o bundle.js
 
 ## TODO
 
+- merge more than one srt? Concat and sort by date just in case
+- Show initial screen with instructions, load and sample buttons
+- Show warning in initial screen instead of
 - Review why the H sign appears with bad data (some gopro samples in gpx)
 - Read and save remote gpx in local storage?
 - satellite images appear pixelated now, for some reason
 - different playing speeds?
-- merge more than one srt? Concat and sort by date just in case
 - Move sidebar to bottom if proportion is... Worse than square? Height still in side. Load on top? smooth vertical? Camera and location divided in lines. background and downloads divided. speeds horizontal?
 - drop load files?
 - move createGUI to visual_setup module?
