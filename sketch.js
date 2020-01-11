@@ -32,6 +32,9 @@ var s = function(p) {
   //Remember if this is an external or internal file
   let external = false;
 
+  //Show welcome screen
+  let showWelcome = true;
+
   p.preload = function() {
     let urlParam = function(name) {
       var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(
@@ -47,7 +50,8 @@ var s = function(p) {
     function loadDemo() {
       helper.preloadFile(
         './samples/sample' + Math.floor(Math.random() * 5) + '.SRT',
-        confirm
+        confirm,
+        true
       );
     }
     const alternative = function(msg) {
@@ -197,7 +201,7 @@ var s = function(p) {
     }
   };
 
-  function confirm(f, alternative, isExternal = false) {
+  function confirm(f, alternative, isExternal = false, demo) {
     external = false;
     memo = null;
     const onError = function(msg) {
@@ -280,6 +284,7 @@ var s = function(p) {
           createGUI();
           dataLoaded = true;
           mapImages.refresh(map, p, true);
+          if (!demo) disableWelcome();
         } else {
           onError('Data not valid');
         }
@@ -321,7 +326,7 @@ var s = function(p) {
       sizes.mainW.width, //width
       sizes.sliderW.height, //height
       colors.areaAlpha, //bg color
-      () => {}
+      null
     ); //callback, do nothing
 
     lastElt = gui.createToggle(
@@ -344,7 +349,7 @@ var s = function(p) {
       sizes.sidebarW.width, //width
       sizes.sidebarW.height, //height
       p.color(100), //bg color
-      () => {}
+      null
     ); //callback, do nothing
 
     lastElt = gui.createSlider(
@@ -367,7 +372,7 @@ var s = function(p) {
       gui_elts.sideBar.y + sizes.textMargin, //y
       sizes.textSize * 0.7, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.CENTER, p.TOP], //TEXT ALIGN
       p.NORMAL
     ); //text style
@@ -391,7 +396,7 @@ var s = function(p) {
       lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.CENTER, p.TOP], //TEXT ALIGN
       p.BOLD
     ); //text style
@@ -403,7 +408,7 @@ var s = function(p) {
       lastElt.y + lastElt.height + sizes.textMargin, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.CENTER, p.TOP], //TEXT ALIGN
       p.NORMAL
     ); //text style
@@ -418,7 +423,7 @@ var s = function(p) {
       lastElt.y + lastElt.height + sizes.textMargin, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.CENTER, p.TOP], //TEXT ALIGN
       p.NORMAL
     ); //text style
@@ -430,7 +435,7 @@ var s = function(p) {
       lastElt.y + lastElt.height + sizes.textMargin, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.CENTER, p.TOP], //TEXT ALIGN
       p.NORMAL
     ); //text style
@@ -442,7 +447,7 @@ var s = function(p) {
       lastElt.y + lastElt.height + sizes.textMargin, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.CENTER, p.TOP], //TEXT ALIGN
       p.NORMAL
     ); //text style
@@ -454,7 +459,7 @@ var s = function(p) {
       lastElt.y + lastElt.height + sizes.textMargin, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.LEFT, p.TOP], //TEXT ALIGN
       p.BOLD
     ); //text style
@@ -479,7 +484,7 @@ var s = function(p) {
       lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.CENTER, p.TOP], //TEXT ALIGN
       p.BOLD
     ); //text style
@@ -505,7 +510,7 @@ var s = function(p) {
       lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.CENTER, p.TOP], //TEXT ALIGN
       p.BOLD
     ); //text style
@@ -529,7 +534,7 @@ var s = function(p) {
       lastElt.y + lastElt.height + sizes.textMargin * 1.5, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.CENTER, p.TOP], //TEXT ALIGN
       p.BOLD
     ); //text style
@@ -653,7 +658,7 @@ var s = function(p) {
       gui_elts.topMap.height, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.LEFT, p.TOP], //TEXT ALIGN
       p.BOLD
     ); //text style
@@ -665,7 +670,7 @@ var s = function(p) {
       gui_elts.topMap.height, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.LEFT, p.TOP], //TEXT ALIGN
       p.BOLD
     ); //text style
@@ -677,10 +682,102 @@ var s = function(p) {
       gui_elts.topMap.height, //y
       sizes.textSize, //height
       colors.textCol, //bg color
-      () => {}, //callback, do nothing
+      null, //callback, do nothing
       [p.LEFT, p.TOP], //TEXT ALIGN
       p.BOLD
     ); //text style
+
+    if (showWelcome) createWelcome();
+  }
+
+  function disableWelcome() {
+    showWelcome = false;
+    gui.empty();
+    createGUI();
+  }
+
+  function createWelcome() {
+    gui.createArea(
+      'welcomeBG',
+      sizes.welcomeBG.x, //x
+      sizes.welcomeBG.y, //y
+      sizes.welcomeBG.width, //width
+      sizes.welcomeBG.height, //height
+      p.color(0, 0.5), //bg color
+      disableWelcome, //close welcome
+      1 //Draw in bg
+    );
+    gui.createArea(
+      'welcomeW',
+      sizes.welcomeW.x, //x
+      sizes.welcomeW.y, //y
+      sizes.welcomeW.width, //width
+      sizes.welcomeW.height, //height
+      p.color(100, 0.9), //bg color
+      () => {}, //absorb clicks before bg
+
+      2 //Draw in middle
+    );
+    gui.createText(
+      'title',
+      'DJI SRT Viewer', //value
+      p.width / 2, //x
+      sizes.welcomeW.y + sizes.margin * 4, //y
+      sizes.textSize * 2, //height
+      colors.textCol, //bg color
+      null, //callback, do nothing
+      [p.CENTER, p.TOP], //TEXT ALIGN
+      p.BOLD, //text style
+      3 //draw on top
+    );
+    gui.createText(
+      'welcomeText',
+      'Vizualize and convert your DJI drone telemetry\nMade for SRT files\nCompatible with other formats (KML, GPX, GeoJSON)', //value
+      p.width / 2, //x
+      sizes.welcomeW.y + sizes.margin * 10, //y
+      sizes.textSize, //height
+      colors.textCol, //bg color
+      null, //callback, do nothing
+      [p.CENTER, p.TOP], //TEXT ALIGN
+      p.NORMAL, //text style
+      3 //draw on top
+    );
+    gui.createButton(
+      'loadButton',
+      'LOAD FILE(S)', //text value
+      p.width / 2 - sizes.welcomeW.width / 12, //x
+      p.height / 2 - sizes.sliderW.height * 1.5 * 2, //y
+      sizes.welcomeW.width / 6, //width
+      sizes.sliderW.height * 1.5, //height
+      colors.sliderCol, //color
+      loadDialog, //callback
+      colors.buttonText,
+      3 //draw on top
+    );
+    gui.createButton(
+      'sampleButton',
+      'LOAD SAMPLE', //text value
+      p.width / 2 - sizes.welcomeW.width / 12, //x
+      p.height / 2, //y
+      sizes.welcomeW.width / 6, //width
+      sizes.sliderW.height * 1.5, //height
+      colors.sliderCol, //color
+      disableWelcome, //callback
+      colors.buttonText,
+      3 //draw on top
+    );
+    gui.createButton(
+      'instructionsButton',
+      'INSTRUCTIONS', //text value
+      p.width / 2 - sizes.welcomeW.width / 12, //x
+      p.height / 2 + sizes.sliderW.height * 1.5 * 2, //y
+      sizes.welcomeW.width / 6, //width
+      sizes.sliderW.height * 1.5, //height
+      colors.sliderCol, //color
+      pressHelp, //callback
+      colors.buttonText,
+      3 //draw on top
+    );
   }
 
   function setSmoothing(value) {
@@ -825,32 +922,35 @@ var s = function(p) {
       if (!mouseOverMaps) player.setPreIndex(-1);
       drawBg();
       gui.draw();
-      let packet = DJIData.metadata().packets[player.getIndex()];
-      gui_elts.dateTime.setValue(helper.formatDate(packet.DATE));
-      gui_elts.distance.setValue(
-        helper.formatDistance(
-          packet.DISTANCE,
-          DJIData.metadata().stats.DISTANCE
-        )
-      );
-      gui_elts.coordinates.setValue(helper.formatCoordinates(packet.GPS));
-      gui_elts.camera.setValue(helper.formatCamera(packet));
-      drawHome(packet);
-      drawOnce(DJIData.metadata());
-      drawGraph(packet, gui_elts.heightText);
-      drawGraph(packet, gui_elts.vertSpeedText);
-      drawGraph(packet, gui_elts.thwoDSpeedText);
-      pointTo(packet, true);
-      if (
-        player.getPreIndex() >= 0 &&
-        player.getPreIndex() !== player.getIndex()
-      ) {
-        let prePacket = DJIData.metadata().packets[player.getPreIndex()];
-        pointTo(prePacket, false);
+      if (!showWelcome) {
+        let packet = DJIData.metadata().packets[player.getIndex()];
+        gui_elts.dateTime.setValue(helper.formatDate(packet.DATE));
+        gui_elts.distance.setValue(
+          helper.formatDistance(
+            packet.DISTANCE,
+            DJIData.metadata().stats.DISTANCE
+          )
+        );
+        gui_elts.coordinates.setValue(helper.formatCoordinates(packet.GPS));
+        gui_elts.camera.setValue(helper.formatCamera(packet));
+
+        drawHome(packet);
+        drawOnce(DJIData.metadata());
+        drawGraph(packet, gui_elts.heightText);
+        drawGraph(packet, gui_elts.vertSpeedText);
+        drawGraph(packet, gui_elts.thwoDSpeedText);
+        pointTo(packet, true);
+        if (
+          player.getPreIndex() >= 0 &&
+          player.getPreIndex() !== player.getIndex()
+        ) {
+          let prePacket = DJIData.metadata().packets[player.getPreIndex()];
+          pointTo(prePacket, false);
+        }
+        labelMap(gui_elts.frontMap);
+        labelMap(gui_elts.topMap);
+        player.advance(); //won't advance if not playing, so no need to worry here
       }
-      labelMap(gui_elts.frontMap);
-      labelMap(gui_elts.topMap);
-      player.advance(); //won't advance if not playing, so no need to worry here
       gui_elts.playSlider.setValue(player.getIndex());
       gui_elts.loadButton.unClick();
     }

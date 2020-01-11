@@ -132,7 +132,8 @@ function helper() {
         'https://www.google.com/maps/search/?api=1&query=' + lat + '%2C' + lon;
       link(url, '_blank');
     },
-    preloadFile: function(file, cb) {
+    preloadFile: function(file, cb, demo) {
+      console.log(demo);
       function loadFileBrowser(file) {
         function readTextFile(file) {
           let rawFile = new XMLHttpRequest();
@@ -149,7 +150,8 @@ function helper() {
                   data: allText,
                   name: fileName
                 };
-                cb(dataObj);
+                //Specify if demo to avoid removing welcome screen
+                cb(dataObj, null, null, demo);
               }
             }
           };

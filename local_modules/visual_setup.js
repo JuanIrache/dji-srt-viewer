@@ -58,6 +58,18 @@ function visual_setup() {
         width: mainW.width - constr(play * hor, 20),
         height: constr(slider * vert, 5)
       };
+      let welcomeW = {
+        width: p.windowWidth * 0.8,
+        height: p.windowHeight * 0.8,
+        x: p.windowWidth * 0.1,
+        y: p.windowHeight * 0.1
+      };
+      let welcomeBG = {
+        width: p.windowWidth,
+        height: p.windowHeight,
+        x: 0,
+        y: 0
+      };
       return {
         margin: constr(15 * lin, 5), //pixels
         textMargin: constr(12 * vert, 5), //pixels
@@ -70,7 +82,9 @@ function visual_setup() {
         mainW,
         bottomW,
         sidebarW,
-        sliderW
+        sliderW,
+        welcomeW,
+        welcomeBG
       };
     }
   };
