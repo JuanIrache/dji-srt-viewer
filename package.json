@@ -12,10 +12,10 @@
     "dji_srt_parser": "^1.0.46",
     "latlon_to_xy": "^1.0.3",
     "mapbox_static_helper": "^1.0.2",
-    "p5_gui": "^1.0.2",
+    "p5_gui": "^1.0.5",
     "togpx": "^0.5.4",
     "tokml": "^0.4.0",
-    "xmldom": "^0.1.27"
+    "xmldom": "^0.1.31"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
