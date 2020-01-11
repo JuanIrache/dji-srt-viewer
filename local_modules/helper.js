@@ -140,7 +140,6 @@ function helper() {
       link(url, '_blank');
     },
     preloadFile: function(file, cb, demo) {
-      console.log(demo);
       function loadFileBrowser(file) {
         function readTextFile(file) {
           let rawFile = new XMLHttpRequest();
