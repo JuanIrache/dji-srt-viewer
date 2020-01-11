@@ -745,9 +745,9 @@ var s = function(p) {
     gui.createButton(
       'loadButton',
       'LOAD FILE(S)', //text value
-      sizes.welcomeBG.width / 2 - sizes.textSize * 6, //x
+      sizes.welcomeBG.width / 2 - sizes.textSize * 8, //x
       sizes.welcomeBG.height / 2 - sizes.sliderW.height * 1.5 * 2, //y
-      sizes.textSize * 12, //width
+      sizes.textSize * 16, //width
       sizes.sliderW.height * 1.5, //height
       colors.sliderCol, //color
       loadDialog, //callback
@@ -757,9 +757,9 @@ var s = function(p) {
     gui.createButton(
       'sampleButton',
       'LOAD SAMPLE', //text value
-      sizes.welcomeBG.width / 2 - sizes.textSize * 6, //x
+      sizes.welcomeBG.width / 2 - sizes.textSize * 8, //x
       sizes.welcomeBG.height / 2, //y
-      sizes.textSize * 12, //width
+      sizes.textSize * 16, //width
       sizes.sliderW.height * 1.5, //height
       colors.sliderCol, //color
       disableWelcome, //callback
@@ -769,9 +769,9 @@ var s = function(p) {
     gui.createButton(
       'instructionsButton',
       'INSTRUCTIONS', //text value
-      sizes.welcomeBG.width / 2 - sizes.textSize * 6, //x
+      sizes.welcomeBG.width / 2 - sizes.textSize * 8, //x
       sizes.welcomeBG.height / 2 + sizes.sliderW.height * 1.5 * 2, //y
-      sizes.textSize * 12, //width
+      sizes.textSize * 16, //width
       sizes.sliderW.height * 1.5, //height
       colors.sliderCol, //color
       pressHelp, //callback
