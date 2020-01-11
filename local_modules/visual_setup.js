@@ -29,7 +29,8 @@ function visual_setup() {
       };
     },
     setSizes: function() {
-      let lin = Math.sqrt(p.windowWidth * p.windowHeight) / Math.sqrt(1920 * 984);
+      let lin =
+        Math.sqrt(p.windowWidth * p.windowHeight) / Math.sqrt(1920 * 984);
       let hor = p.windowWidth / 1920;
       let vert = p.windowHeight / 984;
       function constr(val, m) {
