@@ -33,6 +33,8 @@ $ browserify sketch.js -o bundle.js
 ## TODO
 
 - Show initial screen with instructions, load and sample buttons
+  - Disable initial screen when file loaded
+  - Always center initial text
 - Show warning in initial screen instead of
 - Review why the H sign appears with bad data (some gopro samples in gpx)
 - Read and save remote gpx in local storage?
