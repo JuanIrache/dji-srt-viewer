@@ -34,6 +34,8 @@ var s = function(p) {
 
   //Show welcome screen
   let showWelcome = true;
+  let welcomeText =
+    'Visualize and convert your DJI drone telemetry\nMade for SRT files (Video Caption)\nCompatible with other formats (KML, GPX, GeoJSON)';
 
   p.preload = function() {
     let urlParam = function(name) {
@@ -56,7 +58,8 @@ var s = function(p) {
     }
     const alternative = function(msg) {
       return function() {
-        alert(msg);
+        welcomeText = msg;
+        gui.welcomeText = msg;
         loadDemo();
       };
     };
@@ -76,7 +79,7 @@ var s = function(p) {
             } catch (error) {}
             if (str == null || str.length < 3 || error) {
               alternative(
-                'File not found. If you were using the GoPro Telemetry Extractor, this means your file was deleted from our server to preserve your privacy. You can load the file again from the GoPro Telemetry Extractor or download it in GPX to use it later.'
+                'File not found.\nIf you were using the GoPro Telemetry Extractor,\nthis means your file was deleted from our server to preserve your privacy.\nYou can load the file again from the GoPro Telemetry Extractor\nor download it in GPX to use it later.'
               )();
             } else {
               confirm(
@@ -732,7 +735,7 @@ var s = function(p) {
     );
     gui.createText(
       'welcomeText',
-      'Vizualize and convert your DJI drone telemetry\nMade for SRT files (Video Caption)\nCompatible with other formats (KML, GPX, GeoJSON)', //value
+      welcomeText, //value
       sizes.welcomeBG.width / 2, //x
       sizes.welcomeW.y + sizes.margin * 10, //y
       sizes.textSize, //height
