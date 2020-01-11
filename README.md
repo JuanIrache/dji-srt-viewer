@@ -32,7 +32,6 @@ $ browserify sketch.js -o bundle.js
 
 ## TODO
 
-- merge more than one srt? Concat and sort by date just in case
 - Show initial screen with instructions, load and sample buttons
 - Show warning in initial screen instead of
 - Review why the H sign appears with bad data (some gopro samples in gpx)
