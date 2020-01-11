@@ -721,7 +721,7 @@ var s = function(p) {
     gui.createText(
       'title',
       'DJI SRT Viewer', //value
-      p.width / 2, //x
+      sizes.welcomeBG.width / 2, //x
       sizes.welcomeW.y + sizes.margin * 4, //y
       sizes.textSize * 2, //height
       colors.textCol, //bg color
@@ -733,7 +733,7 @@ var s = function(p) {
     gui.createText(
       'welcomeText',
       'Vizualize and convert your DJI drone telemetry\nMade for SRT files\nCompatible with other formats (KML, GPX, GeoJSON)', //value
-      p.width / 2, //x
+      sizes.welcomeBG.width / 2, //x
       sizes.welcomeW.y + sizes.margin * 10, //y
       sizes.textSize, //height
       colors.textCol, //bg color
@@ -745,9 +745,9 @@ var s = function(p) {
     gui.createButton(
       'loadButton',
       'LOAD FILE(S)', //text value
-      p.width / 2 - sizes.welcomeW.width / 12, //x
-      p.height / 2 - sizes.sliderW.height * 1.5 * 2, //y
-      sizes.welcomeW.width / 6, //width
+      sizes.welcomeBG.width / 2 - sizes.textSize * 6, //x
+      sizes.welcomeBG.height / 2 - sizes.sliderW.height * 1.5 * 2, //y
+      sizes.textSize * 12, //width
       sizes.sliderW.height * 1.5, //height
       colors.sliderCol, //color
       loadDialog, //callback
@@ -757,9 +757,9 @@ var s = function(p) {
     gui.createButton(
       'sampleButton',
       'LOAD SAMPLE', //text value
-      p.width / 2 - sizes.welcomeW.width / 12, //x
-      p.height / 2, //y
-      sizes.welcomeW.width / 6, //width
+      sizes.welcomeBG.width / 2 - sizes.textSize * 6, //x
+      sizes.welcomeBG.height / 2, //y
+      sizes.textSize * 12, //width
       sizes.sliderW.height * 1.5, //height
       colors.sliderCol, //color
       disableWelcome, //callback
@@ -769,9 +769,9 @@ var s = function(p) {
     gui.createButton(
       'instructionsButton',
       'INSTRUCTIONS', //text value
-      p.width / 2 - sizes.welcomeW.width / 12, //x
-      p.height / 2 + sizes.sliderW.height * 1.5 * 2, //y
-      sizes.welcomeW.width / 6, //width
+      sizes.welcomeBG.width / 2 - sizes.textSize * 6, //x
+      sizes.welcomeBG.height / 2 + sizes.sliderW.height * 1.5 * 2, //y
+      sizes.textSize * 12, //width
       sizes.sliderW.height * 1.5, //height
       colors.sliderCol, //color
       pressHelp, //callback
