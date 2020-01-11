@@ -132,11 +132,10 @@ function helper() {
         'https://www.google.com/maps/search/?api=1&query=' + lat + '%2C' + lon;
       link(url, '_blank');
     },
-    launchOverlays: function(lat, lon) {
+    launchLink: function(url) {
       function link(url, winName, options) {
         (winName && open(url, winName, options)) || (location = url);
       }
-      let url = 'https://goprotelemetryextractor.com/#dji';
       link(url, '_blank');
     },
     preloadFile: function(file, cb, demo) {

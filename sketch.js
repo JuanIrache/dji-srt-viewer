@@ -743,7 +743,7 @@ var s = function(p) {
       3 //draw on top
     );
     gui.createButton(
-      'loadButton',
+      'loadButton2',
       'LOAD FILE(S)', //text value
       sizes.welcomeBG.width / 2 - sizes.textSize * 8, //x
       sizes.welcomeBG.height / 2 - sizes.sliderW.height * 1.5 * 2, //y
@@ -780,13 +780,25 @@ var s = function(p) {
     );
     gui.createButton(
       'overlaysButton',
-      'AFTER EFFECTS', //text value
+      'After Effects', //text value
       sizes.welcomeBG.width / 2 - sizes.textSize * 8, //x
       sizes.welcomeBG.height / 2 + sizes.sliderW.height * 1.5 * 4, //y
       sizes.textSize * 16, //width
       sizes.sliderW.height * 1.5, //height
       colors.sliderCol, //color
       loadOverlays, //callback
+      colors.buttonText,
+      3 //draw on top
+    );
+    gui.createButton(
+      'goProButton',
+      'GoPro Telemetry', //text value
+      sizes.welcomeBG.width / 2 - sizes.textSize * 8, //x
+      sizes.welcomeBG.height / 2 + sizes.sliderW.height * 1.5 * 6, //y
+      sizes.textSize * 16, //width
+      sizes.sliderW.height * 1.5, //height
+      colors.sliderCol, //color
+      loadGoPro, //callback
       colors.buttonText,
       3 //draw on top
     );
@@ -1552,8 +1564,13 @@ var s = function(p) {
   }
 
   function loadOverlays() {
-    helper.launchOverlays();
+    helper.launchLink('https://goprotelemetryextractor.com/#dji');
     gui_elts.overlaysButton.unClick();
+  }
+
+  function loadGoPro() {
+    helper.launchLink('https://goprotelemetryextractor.com/free');
+    gui_elts.goProButton.unClick();
   }
 
   function loadDialog() {
