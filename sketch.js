@@ -778,6 +778,18 @@ var s = function(p) {
       colors.buttonText,
       3 //draw on top
     );
+    gui.createButton(
+      'overlaysButton',
+      'AFTER EFFECTS', //text value
+      sizes.welcomeBG.width / 2 - sizes.textSize * 8, //x
+      sizes.welcomeBG.height / 2 + sizes.sliderW.height * 1.5 * 4, //y
+      sizes.textSize * 16, //width
+      sizes.sliderW.height * 1.5, //height
+      colors.sliderCol, //color
+      loadOverlays, //callback
+      colors.buttonText,
+      3 //draw on top
+    );
   }
 
   function setSmoothing(value) {
@@ -1537,6 +1549,11 @@ var s = function(p) {
     let lon = packet.GPS.LONGITUDE;
     helper.launchGoogleMaps(lat, lon);
     gui_elts.gMapsButton.unClick();
+  }
+
+  function loadOverlays() {
+    helper.launchOverlays();
+    gui_elts.overlaysButton.unClick();
   }
 
   function loadDialog() {
