@@ -732,7 +732,7 @@ var s = function(p) {
     );
     gui.createText(
       'welcomeText',
-      'Vizualize and convert your DJI drone telemetry\nMade for SRT files\nCompatible with other formats (KML, GPX, GeoJSON)', //value
+      'Vizualize and convert your DJI drone telemetry\nMade for SRT files (Video Caption)\nCompatible with other formats (KML, GPX, GeoJSON)', //value
       sizes.welcomeBG.width / 2, //x
       sizes.welcomeW.y + sizes.margin * 10, //y
       sizes.textSize, //height
