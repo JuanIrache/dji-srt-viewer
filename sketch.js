@@ -1567,7 +1567,9 @@ var s = function(p) {
   }
 
   function loadOverlays() {
-    helper.launchLink('https://goprotelemetryextractor.com/#dji');
+    helper.launchLink(
+      'https://goprotelemetryextractor.com/mavic-phantom-inspire-telemetry'
+    );
     gui_elts.overlaysButton.unClick();
   }
 
