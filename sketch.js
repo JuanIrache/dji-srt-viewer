@@ -37,6 +37,9 @@ var s = function(p) {
   let welcomeText =
     'Visualize and convert your DJI drone telemetry\nMade for SRT files (Video Caption)\nCompatible with other formats (KML, GPX, GeoJSON)';
 
+  //Units
+  let imperial = false;
+
   p.preload = function() {
     let urlParam = function(name) {
       var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(
@@ -420,7 +423,8 @@ var s = function(p) {
       'distance',
       helper.formatDistance(
         DJIData.metadata().packets[0].DISTANCE,
-        DJIData.metadata().stats.DISTANCE
+        DJIData.metadata().stats.DISTANCE,
+        imperial
       ), //VALUE
       gui_elts.sideBar.x + gui_elts.sideBar.width / 2, //x
       lastElt.y + lastElt.height + sizes.textMargin, //y
@@ -639,15 +643,31 @@ var s = function(p) {
 
     ////////// Help button
 
-    gui.createButton(
+    lastElt = gui.createButton(
       'helpButton',
       'Help', //text value
-      gui_elts.sideBar.x + sizes.margin + thirdSize + sizes.shadowSize * 2, //x
+      gui_elts.sideBar.x + sizes.margin, //x
       lastElt.y + lastElt.height + sizes.shadowSize * 2 + sizes.textMargin, //y
       thirdSize, //width
       sizes.sliderW.height * 1.2, //height
       colors.sliderCol, //color
       pressHelp, //callback
+      colors.buttonText
+    ); //textcolor
+
+    ////////// Units
+
+    gui.createRadio(
+      'unitsRadio',
+      imperial, //value
+      [false, true], //values
+      ['Metric', 'Imperial'], //texts
+      lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
+      lastElt.y, //y
+      thirdSize * 2 + sizes.shadowSize * 4, //width
+      sizes.sliderW.height * 1.2, //height
+      colors.sliderCol, //color
+      imp => (imperial = imp), //callback
       colors.buttonText
     ); //textcolor
 
@@ -955,7 +975,8 @@ var s = function(p) {
         gui_elts.distance.setValue(
           helper.formatDistance(
             packet.DISTANCE,
-            DJIData.metadata().stats.DISTANCE
+            DJIData.metadata().stats.DISTANCE,
+            imperial
           )
         );
         gui_elts.coordinates.setValue(helper.formatCoordinates(packet.GPS));
@@ -1302,19 +1323,21 @@ var s = function(p) {
     let y = mapAlt(alt, stats);
     let tone = colors.textCol;
     let color = p.color(tone, 100, colors.lineBri);
-    let mMin = chooseAlt(stats).min;
-    let mAlt = chooseAlt(stats).max;
+    const mult = imperial ? 3.28084 : 1;
+    const units = imperial ? 'ft' : 'm';
+    let mMin = chooseAlt(stats).min * mult;
+    let mAlt = chooseAlt(stats).max * mult;
     drawLegend(
       min,
       max,
       y,
-      alt.toFixed(2),
+      (alt * mult).toFixed(2),
       mAlt.toFixed(2),
       mMin.toFixed(2),
       thick,
       stats,
       color,
-      'm'
+      units
     );
   }
 
@@ -1326,6 +1349,8 @@ var s = function(p) {
       pckType = pck.SPEED.VERTICAL;
     }
     let thick = Math.abs(sizes.lineThick[0] - sizes.lineThick[1]) / 2;
+    const mult = imperial ? 0.621371 : 1;
+    const units = imperial ? 'mph' : 'km/h';
     let alt = p.nf(pckType, 1, 2);
     let y = p.map(pckType, statsType.min, statsType.max, max, min);
     let tone = setTone(
@@ -1335,9 +1360,10 @@ var s = function(p) {
       elt == gui_elts.vertSpeedText
     ); //negative numbers ok if verticla spped
     let color = p.color(tone, 100, colors.lineBri / 2);
-    let mMin = p.nf(statsType.min, 1, 2);
-    let mAlt = p.nf(statsType.max, 1, 2);
-    drawLegend(min, max, y, alt, mAlt, mMin, thick, stats, color, 'km/h');
+    let mMin = p.nf(statsType.min * mult, 1, 2);
+    let mAlt = p.nf(statsType.max * mult, 1, 2);
+
+    drawLegend(min, max, y, alt, mAlt, mMin, thick, stats, color, units);
   }
 
   function drawGraph(pck, elt) {

@@ -79,12 +79,20 @@ function helper() {
     formatCoordinates: function(gps) {
       return 'Location: ' + convertDMS(gps.LATITUDE, gps.LONGITUDE);
     },
-    formatDistance: function(curr, tot) {
+    formatDistance: function(curr, tot, imperial) {
       curr /= 1000;
       tot /= 1000;
-      return (
-        'Disance: ' + doNf(curr, 1, 2) + ' km / ' + doNf(tot, 1, 2) + ' km'
-      );
+      let units = 'km';
+      if (imperial) {
+        curr *= 0.621371;
+        tot *= 0.621371;
+        units = 'mi';
+      }
+      return `Distance: ${doNf(curr, 1, 2)} ${units} / ${doNf(
+        tot,
+        1,
+        2
+      )} ${units}`;
     },
     formatDate: function(date) {
       return (
