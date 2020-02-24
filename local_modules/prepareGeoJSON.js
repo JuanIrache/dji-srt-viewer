@@ -26,7 +26,10 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
     } else if (key.toUpperCase() === 'HOME_LATITUDE') {
       packet.HOME[1] = object[key].toString();
       return true;
-    } else if (key.toUpperCase() === 'HOME_ELEVATION' || key.toUpperCase() === 'HOME_ALTITUDE') {
+    } else if (
+      key.toUpperCase() === 'HOME_ELEVATION' ||
+      key.toUpperCase() === 'HOME_ALTITUDE'
+    ) {
       packet.HOME[2] = object[key].toString();
       return true;
     }
@@ -55,20 +58,31 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
             if (feature.properties.desc) {
               let propRegex = /\b(\w+)=(.+)(?:\r\n|\r|\n)/g;
               let match;
-              while ((match = propRegex.exec(feature.properties.desc)) !== null) {
-                let value = /^(\d|\.|\-)+$/.test(match[2]) ? Number(match[2]) : match[2];
+              while (
+                (match = propRegex.exec(feature.properties.desc)) !== null
+              ) {
+                let value = /^(\d|\.|\-)+$/.test(match[2])
+                  ? Number(match[2])
+                  : match[2];
                 feature.properties[match[1]] = value;
               }
               delete feature.properties.desc;
             }
             for (let elt in feature.properties) {
               if (
-                ['TIMESTAMP', 'TIMES', 'TIME', 'FEATURECOORDTIMES', 'COORDTIMES'].includes(
-                  elt.toUpperCase()
-                )
+                [
+                  'TIMESTAMP',
+                  'TIMES',
+                  'TIME',
+                  'FEATURECOORDTIMES',
+                  'COORDTIMES'
+                ].includes(elt.toUpperCase())
               ) {
                 let date;
-                if (Array.isArray(feature.properties[elt]) && feature.properties[elt].length > 0) {
+                if (
+                  Array.isArray(feature.properties[elt]) &&
+                  feature.properties[elt].length > 0
+                ) {
                   packet.DATE = deduceDate(feature.properties[elt][0]);
                 } else {
                   packet.DATE = deduceDate(feature.properties[elt]);
@@ -110,7 +124,11 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
   };
   if (!managed) {
     let object = arr ? chooseFeature(geoJSON.features) : geoJSON;
-    if (object.type === 'Feature' && object.geometry && object.geometry.coordinates) {
+    if (
+      object.type === 'Feature' &&
+      object.geometry &&
+      object.geometry.coordinates
+    ) {
       let basePacket = JSON.parse(JSON.stringify(schema));
       for (let prop in object.properties) {
         if (checkAndUpdateHome(basePacket, object.properties, prop)) {
@@ -158,11 +176,16 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
         managed = true;
         if (looksLikeNumber(object.geometry.coordinates[0][0])) {
           let packet = JSON.parse(JSON.stringify(schema));
-          packet.GPS = object.geometry.coordinates[i].map(num => num.toString());
+          packet.GPS = object.geometry.coordinates[i].map(num =>
+            num.toString()
+          );
           if (packet.GPS.length < 3) packet.GPS[2] = 0;
           if (object.properties) {
             if (dateLocation && dateLocation.length > i) {
-              if (looksLikeNumber(dateLocation[i]) && dateLocation[i].toString().length > 15) {
+              if (
+                looksLikeNumber(dateLocation[i]) &&
+                dateLocation[i].toString().length > 15
+              ) {
                 packet.DATE = new Date(dateLocation[i] / 1000).toISOString();
               } else {
                 packet.DATE = new Date(dateLocation[i]).toISOString();
@@ -176,7 +199,11 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
   }
 
   if (!managed) {
-    if (Array.isArray(geoJSON) && geoJSON[0].GPS && looksLikeNumber(geoJSON[0].GPS[0])) {
+    if (
+      Array.isArray(geoJSON) &&
+      geoJSON[0].GPS &&
+      looksLikeNumber(geoJSON[0].GPS[0])
+    ) {
       result = geoJSON;
       managed = true;
     }
@@ -201,9 +228,13 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
           d.setUTCMilliseconds(pckt[prop] / 1000);
           packet.DATE = d.toISOString();
         } else if (
-          ['DEVICETIME', 'TIME', 'TIMES', 'FEATURECOORDTIMES', 'COORDTIMES'].includes(
-            prop.toUpperCase()
-          )
+          [
+            'DEVICETIME',
+            'TIME',
+            'TIMES',
+            'FEATURECOORDTIMES',
+            'COORDTIMES'
+          ].includes(prop.toUpperCase())
         )
           packet.DATE = new Date(pckt[prop]).toISOString();
         else packet[prop.toUpperCase()] = pckt[prop].toString();
@@ -224,7 +255,10 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
       pointer = geoJSON.data;
     } else if (
       Array.isArray(geoJSON) &&
-      (geoJSON[0].lat || geoJSON[0].LAT || geoJSON[0].latitude || geoJSON[0].LATITUDE)
+      (geoJSON[0].lat ||
+        geoJSON[0].LAT ||
+        geoJSON[0].latitude ||
+        geoJSON[0].LATITUDE)
     ) {
       pointer = geoJSON;
     }
@@ -260,7 +294,9 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
   ) {
     result.forEach((r, i) => {
       //convert m/s to km/h
-      const newSide = Math.sqrt(speeds3D[i] * speeds3D[i] - speeds2D[i] * speeds2D[i]);
+      const newSide = Math.sqrt(
+        speeds3D[i] * speeds3D[i] - speeds2D[i] * speeds2D[i]
+      );
       r.SPEED_VERTICAL = '' + (60 * 60 * newSide) / 1000;
     });
   }
