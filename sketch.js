@@ -1431,7 +1431,11 @@ var s = function(p) {
   }
 
   function getElevationOffset(data) {
-    if (window.google != null && data.metadata().packets.length) {
+    if (
+      window.google != null &&
+      data.metadata().packets.length &&
+      chooseAlt(data.metadata().packets[0]) == 0
+    ) {
       const { LATITUDE, LONGITUDE } = data.metadata().packets[0].GPS;
       if (LATITUDE != null && LONGITUDE != null) {
         var elevator = new google.maps.ElevationService();
