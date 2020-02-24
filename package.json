@@ -25,11 +25,13 @@
     "babelify": "^8.0.0",
     "brfs": "^2.0.2",
     "browserify": "^16.5.0",
+    "fs-extra": "^8.1.0",
     "nodemon": "^1.19.4"
   },
   "scripts": {
     "start": "nodemon --ignore bundle.js build.js",
-    "build": "node build.js"
+    "build": "node build.js",
+    "deploy": "node build.js && node deploy.js"
   },
   "author": "Juan Irache",
   "license": "ISC"

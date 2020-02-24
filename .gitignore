@@ -1,3 +1,4 @@
 private/
 node_modules/
+deploy/
 bundle.js
