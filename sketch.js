@@ -41,7 +41,7 @@ var s = function(p) {
   let imperial = false;
 
   // Offset elevation based on starting location
-  let offsetElevation = 100;
+  let offsetElevation = 0;
 
   p.preload = function() {
     let urlParam = function(name) {
@@ -1431,7 +1431,7 @@ var s = function(p) {
   }
 
   function getElevationOffset(data) {
-    if (google != null && data.metadata().packets.length) {
+    if (window.google != null && data.metadata().packets.length) {
       const { LATITUDE, LONGITUDE } = data.metadata().packets[0].GPS;
       if (LATITUDE != null && LONGITUDE != null) {
         var elevator = new google.maps.ElevationService();
