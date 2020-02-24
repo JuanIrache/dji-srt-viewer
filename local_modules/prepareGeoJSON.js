@@ -1,4 +1,4 @@
-function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
+function fromGeoJSON(JSONstr, { speeds2D, speeds3D } = {}) {
   let deduceDate = function(preDate) {
     let postDate = preDate;
     if (typeof preDate === 'number') {
