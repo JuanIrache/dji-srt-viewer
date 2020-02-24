@@ -40,6 +40,9 @@ var s = function(p) {
   //Units
   let imperial = false;
 
+  // Offset elevation based on starting location
+  let offsetElevation = 100;
+
   p.preload = function() {
     let urlParam = function(name) {
       var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(
@@ -220,6 +223,8 @@ var s = function(p) {
         let preDJIData;
         if (hasExtension(f.name, '.SRT')) {
           preDJIData = DJISRTParser(f.data, f.name);
+          //SRT files often have takeoff based altitude
+          getElevationOffset(preDJIData);
         } else if (
           hasExtension(f.name, '.JSON') ||
           hasExtension(f.name, '.GEOJSON')
@@ -1325,14 +1330,15 @@ var s = function(p) {
     let color = p.color(tone, 100, colors.lineBri);
     const mult = imperial ? 3.28084 : 1;
     const units = imperial ? 'ft' : 'm';
-    let mMin = chooseAlt(stats).min * mult;
-    let mAlt = chooseAlt(stats).max * mult;
+    let mMin = (offsetElevation + chooseAlt(stats).min) * mult;
+    let mMax = (offsetElevation + chooseAlt(stats).max) * mult;
+    let mAlt = (offsetElevation + alt) * mult;
     drawLegend(
       min,
       max,
       y,
-      (alt * mult).toFixed(2),
       mAlt.toFixed(2),
+      mMax.toFixed(2),
       mMin.toFixed(2),
       thick,
       stats,
@@ -1406,19 +1412,49 @@ var s = function(p) {
   }
 
   function downloadMgjson() {
-    p.save([JSON.stringify(DJIData.toMGJSON())], getFileName(), 'MGJSON');
+    p.save(
+      [JSON.stringify(DJIData.toMGJSON(offsetElevation))],
+      getFileName(),
+      'MGJSON'
+    );
   }
 
   function downloadJson() {
-    p.save([DJIData.toGeoJSON()], getFileName(), 'JSON');
+    p.save(
+      [DJIData.toGeoJSON(false, true, offsetElevation)],
+      getFileName(),
+      'JSON'
+    );
   }
 
   function pressHelp() {
     p.select('#help').elt.click();
   }
 
+  function getElevationOffset(data) {
+    if (google != null && data.metadata().packets.length) {
+      const { LATITUDE, LONGITUDE } = data.metadata().packets[0].GPS;
+      if (LATITUDE != null && LONGITUDE != null) {
+        var elevator = new google.maps.ElevationService();
+        elevator.getElevationForLocations(
+          {
+            locations: [{ lat: LATITUDE, lng: LONGITUDE }]
+          },
+          function(results, status) {
+            if (status === 'OK') {
+              // Retrieve the first result
+              if (results[0]) {
+                offsetElevation = results[0].elevation || 0;
+              }
+            }
+          }
+        );
+      }
+    }
+  }
+
   function downloadKML() {
-    let preKml = JSON.parse(DJIData.toGeoJSON());
+    let preKml = JSON.parse(DJIData.toGeoJSON(false, false, offsetElevation));
     let timestamp = false;
     preKml.features.forEach(feature => {
       if (feature.properties.hasOwnProperty('timestamp')) {
@@ -1440,7 +1476,7 @@ var s = function(p) {
   }
 
   function downloadGPX() {
-    let preGpx = JSON.parse(DJIData.toGeoJSON());
+    let preGpx = JSON.parse(DJIData.toGeoJSON(false, false, offsetElevation));
     let timestamp = false;
     preGpx.features.forEach(feature => {
       if (feature.properties.hasOwnProperty('timestamp')) {
