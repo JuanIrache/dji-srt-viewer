@@ -1010,16 +1010,15 @@ var s = function(p) {
   };
 
   function chooseAlt(pckt) {
+    var result = 0;
     if (pckt.BAROMETER != undefined) {
-      return pckt.BAROMETER;
+      result = pckt.BAROMETER;
     } else if (pckt.HB != undefined) {
-      return pckt.HB;
+      result = pckt.HB;
     } else if (pckt.HS != undefined) {
-      return pckt.HS;
-    } else if (pckt.GPS != undefined && pckt.GPS.ALTITUDE) {
-      return pckt.GPS.ALTITUDE;
+      result = pckt.HS;
     }
-    return 0;
+    return result;
   }
 
   function setTone(val, min, max, neg) {
