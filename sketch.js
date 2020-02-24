@@ -1,4 +1,5 @@
 'use strict';
+const { mapBoxToken, googleToken, gtagToken } = require('./private/keys'); //tokens
 
 var s = function(p) {
   //p5js functions
@@ -6,7 +7,6 @@ var s = function(p) {
     conversions = require('latlon_to_xy'),
     helper = require('./local_modules/helper'),
     map = require('mapbox_static_helper'),
-    { mapBoxToken } = require('./private/keys'), //tokens
     mapImages = require('./local_modules/map_drawer'),
     createPlayer = require('./local_modules/create_player'),
     visual_setup = require('./local_modules/visual_setup'),
@@ -1661,4 +1661,30 @@ var s = function(p) {
     }
   };
 };
+
+// Prevent Google maps complaints
+window.initMap = function() {};
+
+function preloads() {
+  //Allow Google apis
+  var scriptTag = document.createElement('script');
+  scriptTag.setAttribute('async', true);
+  scriptTag.setAttribute('defer', true);
+  scriptTag.src = `https://maps.googleapis.com/maps/api/js?key=${googleToken}&callback=initMap`;
+  document.querySelector('body').appendChild(scriptTag);
+
+  var scriptTag2 = document.createElement('script');
+  scriptTag2.src = `https://www.googletagmanager.com/gtag/js?id=${gtagToken}`;
+  document.querySelector('body').appendChild(scriptTag2);
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag('js', new Date());
+  gtag('config', gtagToken);
+}
+
+preloads();
+
 var myp5 = new p5(s);
