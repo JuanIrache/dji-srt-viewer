@@ -248,6 +248,7 @@ var s = function(p) {
           preDJIData = DJISRTParser(converted, f.name);
         } else if (hasExtension(f.name, '.GPX')) {
           var gpx = new DOMParser().parseFromString(decode(f.data));
+
           var converted = togeojson.gpx(gpx);
           ///hack to extract GoPro speeds
           const speed3DRE = /<gpxtpx:speed>[\d.]+<\/gpxtpx:speed>/g;

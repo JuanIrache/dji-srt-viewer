@@ -8,7 +8,7 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
   };
   let schema = {
     HOME: ['0', '0'],
-    GPS: ['0', '0', '0'],
+    GPS: ['0', '0'],
     DATE: new Date().toISOString()
   };
 
@@ -102,7 +102,7 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
               if (feature.geometry.coordinates.length > 1)
                 packet.GPS[1] = feature.geometry.coordinates[1].toString();
               if (feature.geometry.coordinates.length > 2)
-                packet.GPS[2] = feature.geometry.coordinates[2].toString();
+                packet.BAROMETER = feature.geometry.coordinates[2].toString();
             }
           }
           return packet;
@@ -176,10 +176,11 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
         managed = true;
         if (looksLikeNumber(object.geometry.coordinates[0][0])) {
           let packet = JSON.parse(JSON.stringify(schema));
-          packet.GPS = object.geometry.coordinates[i].map(num =>
-            num.toString()
-          );
-          if (packet.GPS.length < 3) packet.GPS[2] = 0;
+          packet.GPS[0] = (object.geometry.coordinates[i][0] || 0).toString();
+          packet.GPS[1] = (object.geometry.coordinates[i][1] || 0).toString();
+          packet.BAROMETER = (
+            object.geometry.coordinates[i][2] || 0
+          ).toString();
           if (object.properties) {
             if (dateLocation && dateLocation.length > i) {
               if (
@@ -218,7 +219,7 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D }) {
         else if (['LATITUDE', 'LAT'].includes(prop.toUpperCase()))
           packet.GPS[1] = pckt[prop].toString();
         else if (['ALTITUDE', 'ALT'].includes(prop.toUpperCase()))
-          packet.GPS[2] = pckt[prop].toString();
+          packet.BAROMETER = pckt[prop].toString();
         else if (
           'UTC' === prop.toUpperCase() &&
           typeof pckt[prop] === 'number' &&
