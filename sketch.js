@@ -223,8 +223,6 @@ var s = function(p) {
         let preDJIData;
         if (hasExtension(f.name, '.SRT')) {
           preDJIData = DJISRTParser(f.data, f.name);
-          //SRT files often have takeoff based altitude
-          getElevationOffset(preDJIData);
         } else if (
           hasExtension(f.name, '.JSON') ||
           hasExtension(f.name, '.GEOJSON')
@@ -290,6 +288,11 @@ var s = function(p) {
         } else if (isDataValid(preDJIData)) {
           external = isExternal;
           DJIData = preDJIData;
+          offsetElevation = 0;
+          if (hasExtension(f.name, '.SRT')) {
+            //SRT files often have takeoff based altitude
+            getElevationOffset(DJIData);
+          }
           let zoom = setZoom();
           player = createPlayer(DJIData.metadata().packets.length, 0, true);
           loadMap(zoom);
