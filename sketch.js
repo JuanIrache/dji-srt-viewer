@@ -666,19 +666,22 @@ var s = function(p) {
 
     ////////// Units
 
-    gui.createRadio(
+    gui.createToggle(
       'unitsRadio',
       imperial, //value
-      [false, true], //values
-      ['Metric', 'Imperial'], //texts
+      'Imperial', //text
       lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
       lastElt.y, //y
-      thirdSize * 2 + sizes.shadowSize * 4, //width
+      thirdSize, //width
       sizes.sliderW.height * 1.2, //height
       colors.sliderCol, //color
-      imp => (imperial = imp), //callback
-      colors.buttonText
-    ); //textcolor
+      val => {
+        imperial = val;
+      }, //callback
+      colors.buttonText, //textcolor
+      null,
+      'Metric' //Off value
+    );
 
     //////////
 
