@@ -42,6 +42,12 @@ var s = function(p) {
 
   // Offset elevation based on starting location
   let offsetElevation = 0;
+  let useOffsetElevation = true;
+
+  //Decide wether to apply elevation offset or not
+  function appliedElevOffset() {
+    return useOffsetElevation ? offsetElevation : 0;
+  }
 
   p.preload = function() {
     let urlParam = function(name) {
@@ -55,6 +61,7 @@ var s = function(p) {
       }
     };
     let source = urlParam('source');
+
     function loadDemo() {
       helper.preloadFile(
         './samples/sample' + Math.floor(Math.random() * 5) + '.SRT',
@@ -666,7 +673,7 @@ var s = function(p) {
 
     ////////// Units
 
-    gui.createToggle(
+    lastElt = gui.createToggle(
       'unitsRadio',
       imperial, //value
       'Imperial', //text
@@ -681,6 +688,25 @@ var s = function(p) {
       colors.buttonText, //textcolor
       null,
       'Metric' //Off value
+    );
+
+    ////////// Toggle altitude offset
+
+    gui.createToggle(
+      'useOffsetElevation',
+      useOffsetElevation, //value
+      'Sea-level', //text
+      lastElt.x + lastElt.width + sizes.shadowSize * 2, //x
+      lastElt.y, //y
+      thirdSize, //width
+      sizes.sliderW.height * 1.2, //height
+      colors.sliderCol, //color
+      val => {
+        useOffsetElevation = val;
+      }, //callback
+      colors.buttonText, //textcolor
+      null,
+      'Raw height' //Off value
     );
 
     //////////
@@ -1336,9 +1362,9 @@ var s = function(p) {
     let color = p.color(tone, 100, colors.lineBri);
     const mult = imperial ? 3.28084 : 1;
     const units = imperial ? 'ft' : 'm';
-    let mMin = (offsetElevation + chooseAlt(stats).min) * mult;
-    let mMax = (offsetElevation + chooseAlt(stats).max) * mult;
-    let mAlt = (offsetElevation + alt) * mult;
+    let mMin = (appliedElevOffset() + chooseAlt(stats).min) * mult;
+    let mMax = (appliedElevOffset() + chooseAlt(stats).max) * mult;
+    let mAlt = (appliedElevOffset() + alt) * mult;
     drawLegend(
       min,
       max,
@@ -1419,7 +1445,7 @@ var s = function(p) {
 
   function downloadMgjson() {
     p.save(
-      [JSON.stringify(DJIData.toMGJSON(offsetElevation))],
+      [JSON.stringify(DJIData.toMGJSON(appliedElevOffset()))],
       getFileName(),
       'MGJSON'
     );
@@ -1427,7 +1453,7 @@ var s = function(p) {
 
   function downloadJson() {
     p.save(
-      [DJIData.toGeoJSON(false, true, offsetElevation)],
+      [DJIData.toGeoJSON(false, true, appliedElevOffset())],
       getFileName(),
       'JSON'
     );
@@ -1438,11 +1464,7 @@ var s = function(p) {
   }
 
   function getElevationOffset(data) {
-    if (
-      window.google != null &&
-      data.metadata().packets.length &&
-      chooseAlt(data.metadata().packets[0]) == 0
-    ) {
+    if (window.google != null && data.metadata().packets.length) {
       const { LATITUDE, LONGITUDE } = data.metadata().packets[0].GPS;
       if (LATITUDE != null && LONGITUDE != null) {
         var elevator = new google.maps.ElevationService();
@@ -1464,7 +1486,9 @@ var s = function(p) {
   }
 
   function downloadKML() {
-    let preKml = JSON.parse(DJIData.toGeoJSON(false, false, offsetElevation));
+    let preKml = JSON.parse(
+      DJIData.toGeoJSON(false, false, appliedElevOffset())
+    );
     let timestamp = false;
     preKml.features.forEach(feature => {
       if (feature.properties.hasOwnProperty('timestamp')) {
@@ -1486,7 +1510,9 @@ var s = function(p) {
   }
 
   function downloadGPX() {
-    let preGpx = JSON.parse(DJIData.toGeoJSON(false, false, offsetElevation));
+    let preGpx = JSON.parse(
+      DJIData.toGeoJSON(false, false, appliedElevOffset())
+    );
     let timestamp = false;
     preGpx.features.forEach(feature => {
       if (feature.properties.hasOwnProperty('timestamp')) {
