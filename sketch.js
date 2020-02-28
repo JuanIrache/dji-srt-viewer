@@ -712,7 +712,7 @@ var s = function(p) {
     //////////
 
     let labelsOffset = (gui_elts.sideBar.width - sizes.margin * 4) / 3;
-    lastElt = gui.createText(
+    gui.createText(
       'heightText',
       'Height', //value
       gui_elts.sideBar.x + sizes.margin * 1 + labelsOffset * 0, //x
@@ -724,7 +724,7 @@ var s = function(p) {
       p.BOLD
     ); //text style
 
-    lastElt = gui.createText(
+    gui.createText(
       'vertSpeedText',
       'Vert. S.', //value
       gui_elts.sideBar.x + sizes.margin * 2 + labelsOffset * 1, //x
@@ -736,7 +736,7 @@ var s = function(p) {
       p.BOLD
     ); //text style
 
-    lastElt = gui.createText(
+    gui.createText(
       'thwoDSpeedText',
       '2D Speed', //value
       gui_elts.sideBar.x + sizes.margin * 3 + labelsOffset * 2, //x
