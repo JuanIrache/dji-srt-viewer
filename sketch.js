@@ -1465,7 +1465,15 @@ var s = function(p) {
 
   function getElevationOffset(data) {
     if (window.google != null && data.metadata().packets.length) {
-      const { LATITUDE, LONGITUDE } = data.metadata().packets[0].GPS;
+      let { LATITUDE, LONGITUDE } = data.metadata().packets[0].GPS;
+      if (
+        data.metadata().packets[0].HOME &&
+        data.metadata().packets[0].HOME.LATITUDE != null &&
+        data.metadata().packets[0].HOME.LONGITUDE != null
+      ) {
+        LATITUDE = data.metadata().packets[0].HOME.LATITUDE;
+        LONGITUDE = data.metadata().packets[0].HOME.LONGITUDE;
+      }
       if (LATITUDE != null && LONGITUDE != null) {
         var elevator = new google.maps.ElevationService();
         elevator.getElevationForLocations(
