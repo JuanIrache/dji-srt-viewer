@@ -1722,9 +1722,10 @@ function preloads() {
   scriptTag2.src = `https://www.googletagmanager.com/gtag/js?id=${gtagToken}`;
   document.querySelector('body').appendChild(scriptTag2);
 
+  scriptTag2.setAttribute('async', true);
   window.dataLayer = window.dataLayer || [];
   function gtag() {
-    dataLayer.push(arguments);
+    window.dataLayer.push(arguments);
   }
   gtag('js', new Date());
   gtag('config', gtagToken);
