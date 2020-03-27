@@ -9,7 +9,7 @@
   "main": "sketch.js",
   "dependencies": {
     "@mapbox/togeojson": "^0.16.0",
-    "dji_srt_parser": "^1.1.4",
+    "dji_srt_parser": "^1.1.5",
     "latlon_to_xy": "^1.0.3",
     "mapbox_static_helper": "^1.0.2",
     "p5_gui": "^1.0.6",
