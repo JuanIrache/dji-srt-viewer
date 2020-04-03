@@ -9,7 +9,7 @@
   "main": "sketch.js",
   "dependencies": {
     "@mapbox/togeojson": "^0.16.0",
-    "dji_srt_parser": "^1.1.5",
+    "dji_srt_parser": "^1.1.6",
     "latlon_to_xy": "^1.0.3",
     "mapbox_static_helper": "^1.0.2",
     "p5_gui": "^1.0.6",
@@ -24,7 +24,7 @@
     "babel-preset-env": "^1.7.0",
     "babelify": "^8.0.0",
     "brfs": "^2.0.2",
-    "browserify": "^16.5.0",
+    "browserify": "^16.5.1",
     "fs-extra": "^8.1.0",
     "nodemon": "^1.19.4"
   },
