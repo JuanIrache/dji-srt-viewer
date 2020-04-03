@@ -1044,7 +1044,9 @@ var s = function (p) {
 
   function chooseAlt(pckt) {
     var result = 0;
-    if (pckt.BAROMETER != undefined) {
+    if (pckt.ALTITUDE != undefined) {
+      result = pckt.ALTITUDE;
+    } else if (pckt.BAROMETER != undefined) {
       result = pckt.BAROMETER;
     } else if (pckt.HB != undefined) {
       result = pckt.HB;
