@@ -1,7 +1,7 @@
 'use strict';
 const { mapBoxToken, googleToken, gtagToken } = require('./private/keys'); //tokens
 
-var s = function(p) {
+var s = function (p) {
   //p5js functions
   const DJISRTParser = require('dji_srt_parser'),
     conversions = require('latlon_to_xy'),
@@ -49,8 +49,8 @@ var s = function(p) {
     return useOffsetElevation ? offsetElevation : 0;
   }
 
-  p.preload = function() {
-    let urlParam = function(name) {
+  p.preload = function () {
+    let urlParam = function (name) {
       var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(
         window.location.href
       );
@@ -69,8 +69,8 @@ var s = function(p) {
         true
       );
     }
-    const alternative = function(msg) {
-      return function() {
+    const alternative = function (msg) {
+      return function () {
         welcomeText = msg;
         gui.welcomeText = msg;
         loadDemo();
@@ -79,12 +79,12 @@ var s = function(p) {
     if (source != null) {
       if (/\.gpx$/.test(source)) {
         fetch(source, {
-          method: 'GET'
+          method: 'GET',
         })
-          .then(function(response) {
+          .then(function (response) {
             return response.text();
           })
-          .then(str => {
+          .then((str) => {
             //Errors come as JSON, try to parse them
             let error = null;
             try {
@@ -102,7 +102,7 @@ var s = function(p) {
               );
             }
           })
-          .catch(error => {
+          .catch((error) => {
             alternative(
               'Error loading file. Please check that your file is available.'
             )();
@@ -184,7 +184,7 @@ var s = function(p) {
         // not effective DJIData.metadata().stats.BAROMETER || DJIData.metadata().stats.HB || DJIData.metadata().stats.HS || DJIData.metadata().stats.GPS.ALTITUDE,
         DJIData.metadata().stats.DURATION,
         DJIData.metadata().stats.DISTANCE,
-        DJIData.metadata().stats.GPS.LATITUDE.avg
+        DJIData.metadata().stats.GPS.LATITUDE.avg,
       ];
       if (toCheck.indexOf(null) > -1) return false;
       return true;
@@ -209,7 +209,7 @@ var s = function(p) {
     );
   }
 
-  let decode = function(d) {
+  let decode = function (d) {
     if (typeof d === 'string' && d.split(',')[0].includes('base64')) {
       return atob(d.split(',')[1]);
     } else {
@@ -220,7 +220,7 @@ var s = function(p) {
   function confirm(f, alternative, isExternal = false, demo) {
     external = false;
     memo = null;
-    const onError = function(msg) {
+    const onError = function (msg) {
       console.error(msg);
       displayError();
       if (alternative) alternative();
@@ -264,7 +264,7 @@ var s = function(p) {
           let speeds3D, speeds2D;
           if (matches) {
             speeds3D = matches.map(
-              m => +m.replace(/<gpxtpx:speed>([\d.]+)<\/gpxtpx:speed>/, '$1')
+              (m) => +m.replace(/<gpxtpx:speed>([\d.]+)<\/gpxtpx:speed>/, '$1')
             );
           }
 
@@ -272,7 +272,7 @@ var s = function(p) {
             matches = decode(f.data).match(speed3DREbis);
             if (matches) {
               speeds3D = matches.map(
-                m => +m.replace(/3dSpeed:\s?([\d.]+)/, '$1')
+                (m) => +m.replace(/3dSpeed:\s?([\d.]+)/, '$1')
               );
             }
           }
@@ -280,7 +280,7 @@ var s = function(p) {
           matches = decode(f.data).match(speed2DRE);
           if (matches) {
             speeds2D = matches.map(
-              m => +m.replace(/2dSpeed:\s?([\d.]+)/, '$1')
+              (m) => +m.replace(/2dSpeed:\s?([\d.]+)/, '$1')
             );
           }
           //
@@ -360,7 +360,7 @@ var s = function(p) {
       sizes.play, //width
       sizes.sliderW.height, //height
       colors.playCol, //color
-      on => player.play(on), //callback
+      (on) => player.play(on), //callback
       colors.buttonText
     ); //textcolor
 
@@ -382,7 +382,7 @@ var s = function(p) {
       sizes.sliderW.width - sizes.shadowSize, //width
       sizes.sliderW.height, //height
       colors.sliderCol, //color
-      index => player.setIndex(index), //callback
+      (index) => player.setIndex(index), //callback
       0, //min
       DJIData.metadata().packets.length - 1
     ); //max
@@ -682,7 +682,7 @@ var s = function(p) {
       thirdSize, //width
       sizes.sliderW.height * 1.2, //height
       colors.sliderCol, //color
-      val => {
+      (val) => {
         imperial = val;
       }, //callback
       colors.buttonText, //textcolor
@@ -701,7 +701,7 @@ var s = function(p) {
       thirdSize, //width
       sizes.sliderW.height * 1.2, //height
       colors.sliderCol, //color
-      val => {
+      (val) => {
         useOffsetElevation = val;
       }, //callback
       colors.buttonText, //textcolor
@@ -947,7 +947,7 @@ var s = function(p) {
     console.log('Recording');
   }
 
-  p.setup = function() {
+  p.setup = function () {
     visual_setup.setP(p); //pass p5 instance to visual functions
     preferences = visual_setup.preferences();
     colors = visual_setup.colors();
@@ -967,7 +967,7 @@ var s = function(p) {
     child.style.paddingRight = child.offsetWidth - child.clientWidth + 'px';
   };
 
-  p.windowResized = function() {
+  p.windowResized = function () {
     memo = null;
     sizes = visual_setup.setSizes(); // adapt sizes for everything
     createGUI();
@@ -979,7 +979,7 @@ var s = function(p) {
     p.resizeCanvas(p.windowWidth, p.windowHeight);
   };
 
-  p.draw = function() {
+  p.draw = function () {
     if (dataLoaded) {
       let mouseOverMaps = false;
       for (let elt in gui_elts) {
@@ -996,7 +996,7 @@ var s = function(p) {
             mouseOverMaps = true;
           });
         } else if (gui_elts[elt] === gui_elts.playSlider) {
-          gui_elts[elt].mouseOver(p.mouseX, p.mouseY, i => {
+          gui_elts[elt].mouseOver(p.mouseX, p.mouseY, (i) => {
             player.setPreIndex(i);
             mouseOverMaps = true;
           });
@@ -1124,13 +1124,13 @@ var s = function(p) {
         lons[0] = index > 1 ? array[index - 2].GPS.LONGITUDE : lons[1];
         lons[3] =
           index < array.length - 1 ? array[index + 1].GPS.LONGITUDE : lons[2];
-        let xs = lons.map(lon => conversions.lonToX(lon));
+        let xs = lons.map((lon) => conversions.lonToX(lon));
         lats[2] = pck.GPS.LATITUDE;
         lats[1] = index > 0 ? array[index - 1].GPS.LATITUDE : lats[2];
         lats[0] = index > 1 ? array[index - 2].GPS.LATITUDE : lats[1];
         lats[3] =
           index < array.length - 1 ? array[index + 1].GPS.LATITUDE : lats[2];
-        let ys = lats.map(lat => conversions.latToY(lat));
+        let ys = lats.map((lat) => conversions.latToY(lat));
 
         function drawCurves(thick, tone, xs, ys) {
           memo.strokeWeight(thick);
@@ -1174,7 +1174,7 @@ var s = function(p) {
         alts[0] = index > 1 ? chooseAlt(array[index - 2]) : alts[1];
         alts[3] =
           index < array.length - 1 ? chooseAlt(array[index + 1]) : alts[2];
-        ys = alts.map(alt => mapAlt(alt, stats));
+        ys = alts.map((alt) => mapAlt(alt, stats));
 
         function drawBottom(xs, ys) {
           memo.push();
@@ -1478,9 +1478,9 @@ var s = function(p) {
         var elevator = new google.maps.ElevationService();
         elevator.getElevationForLocations(
           {
-            locations: [{ lat: LATITUDE, lng: LONGITUDE }]
+            locations: [{ lat: LATITUDE, lng: LONGITUDE }],
           },
-          function(results, status) {
+          function (results, status) {
             if (status === 'OK') {
               // Retrieve the first result
               if (results[0]) {
@@ -1498,7 +1498,7 @@ var s = function(p) {
       DJIData.toGeoJSON(false, false, appliedElevOffset())
     );
     let timestamp = false;
-    preKml.features.forEach(feature => {
+    preKml.features.forEach((feature) => {
       if (feature.properties.hasOwnProperty('timestamp')) {
         timestamp = true;
         if (typeof feature.properties.timestamp !== 'object')
@@ -1512,7 +1512,7 @@ var s = function(p) {
         preKml.features.length - 1
       ].properties.timestamp = preKml.features[
         preKml.features.length - 1
-      ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
+      ].properties.timestamp.map((stamp) => new Date(stamp).toISOString());
       p.save([tokml(preKml)], getFileName(), 'KML');
     }
   }
@@ -1522,7 +1522,7 @@ var s = function(p) {
       DJIData.toGeoJSON(false, false, appliedElevOffset())
     );
     let timestamp = false;
-    preGpx.features.forEach(feature => {
+    preGpx.features.forEach((feature) => {
       if (feature.properties.hasOwnProperty('timestamp')) {
         timestamp = true;
         if (typeof feature.properties.timestamp !== 'object')
@@ -1536,7 +1536,7 @@ var s = function(p) {
         preGpx.features.length - 1
       ].properties.times = preGpx.features[
         preGpx.features.length - 1
-      ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
+      ].properties.timestamp.map((stamp) => new Date(stamp).toISOString());
       p.save(
         [togpx(preGpx, { creator: 'dji-srt-viewer' })],
         getFileName(),
@@ -1567,7 +1567,7 @@ var s = function(p) {
     //click on one of the main maps, top or bottom. commit click or just preselect
     let lonLat = {
       longitude: conversions.xToLon(mx - gui_elts.topMap.width / 2),
-      latitude: conversions.yToLat(my - gui_elts.topMap.height / 2)
+      latitude: conversions.yToLat(my - gui_elts.topMap.height / 2),
     };
     function dist(x1, y1, x2, y2) {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -1688,19 +1688,19 @@ var s = function(p) {
     helper.loadDialog(p, confirm);
   }
 
-  p.mousePressed = function() {
+  p.mousePressed = function () {
     if (dataLoaded) {
       gui.mousePressed(p.mouseX, p.mouseY);
     }
   };
 
-  p.keyPressed = function(value) {
+  p.keyPressed = function (value) {
     if (value.key == 'f') {
       loadDialog();
     }
   };
 
-  p.mouseReleased = function() {
+  p.mouseReleased = function () {
     if (dataLoaded) {
       gui.mouseReleased();
     }
@@ -1708,7 +1708,7 @@ var s = function(p) {
 };
 
 // Prevent Google maps complaints
-window.initMap = function() {};
+window.initMap = function () {};
 
 function preloads() {
   //Allow Google apis
