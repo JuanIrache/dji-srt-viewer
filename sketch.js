@@ -536,7 +536,7 @@ var s = function (p) {
       preferences.zoomRange, //values
       preferences.zoomLabels, //texts
       gui_elts.sideBar.x + sizes.margin, //x
-      lastElt.y + lastElt.height + sizes.textMargin, //y
+      lastElt.y + lastElt.height + sizes.shadowSize * 2, //y
       gui_elts.sideBar.width - sizes.margin * 2, //width
       sizes.sliderW.height * 1.2, //height
       colors.sliderCol, //color
