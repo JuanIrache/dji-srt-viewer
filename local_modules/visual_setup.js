@@ -1,10 +1,10 @@
 function visual_setup() {
   let p;
   return {
-    setP: function(p5) {
+    setP: function (p5) {
       p = p5;
     },
-    preferences: function() {
+    preferences: function () {
       return {
         map: 'none',
         mapRange: ['none', 'satellite-v9', 'outdoors-v10'],
@@ -13,7 +13,7 @@ function visual_setup() {
         smoothRange: [0, 20]
       };
     },
-    colors: function() {
+    colors: function () {
       return {
         lineAlp: 0.7,
         redTone: 0,
@@ -28,7 +28,7 @@ function visual_setup() {
         shadowOpacity: 0.5
       };
     },
-    setSizes: function() {
+    setSizes: function () {
       let lin =
         Math.sqrt(p.windowWidth * p.windowHeight) / Math.sqrt(1920 * 984);
       let hor = p.windowWidth / 1920;
