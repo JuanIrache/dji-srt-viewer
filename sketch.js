@@ -1153,7 +1153,7 @@ var s = function (p) {
         let ys = lats.map(lat => conversions.latToY(lat));
 
         function drawCurves(thick, tone, xs, ys) {
-          memo.strokeWeight(thick);
+          memo.strokeWeight(thick * mapFill);
           memo.stroke(tone, 100, colors.lineBri, colors.lineAlp);
           if (
             p.round(xs[0]) == p.round(xs[1]) &&
@@ -1236,6 +1236,7 @@ var s = function (p) {
     p.textSize(sizes.textSize * 0.8);
     p.textStyle(p.BOLD);
     p.textAlign(p.CENTER, p.CENTER);
+    p.scale(mapFill);
     p.text('H', 0, 0);
     p.noFill();
     p.strokeWeight(sizes.strokes);
@@ -1281,7 +1282,7 @@ var s = function (p) {
     p.translate(gui_elts.topMap.width / 2, gui_elts.topMap.height / 2);
     if (main) {
       p.stroke(tone, 100, colors.lineBri / 2);
-      p.strokeWeight(thick);
+      p.strokeWeight(thick * mapFill);
       p.point(x, y);
     } else {
       p.noFill();
