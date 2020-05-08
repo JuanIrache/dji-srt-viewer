@@ -26,11 +26,14 @@ var s = function (p) {
     can,
     gui_elts, //will store all the gui_elts elements and functions
     sizes;
+
   const tileH = 512;
   //will store the paths image to speed up drawing
   let memo = null;
   //Remember if this is an external or internal file
   let external = false;
+
+  let mapFill = 1;
 
   //Show welcome screen
   let showWelcome = true;
@@ -144,8 +147,8 @@ var s = function (p) {
     function isOutside(lon, lat) {
       let sLon = conversions.lonToX(lon) + sizes.mainW.width / 2;
       let sLat = conversions.latToY(lat) + sizes.mainW.height / 2;
-      let w = sizes.mainW.width - sizes.margin;
-      let h = sizes.mainW.height - sizes.margin;
+      let w = (sizes.mainW.width - sizes.margin) * (0.5 + mapFill / 2);
+      let h = (sizes.mainW.height - sizes.margin) * (0.5 + mapFill / 2);
       if (sLon > w || sLon < sizes.margin) return true;
       if (sLat > h || sLat < sizes.margin) return true;
       return false;
@@ -523,6 +526,20 @@ var s = function (p) {
       sizes.sliderW.height * 1.2, //height
       colors.sliderCol, //color
       setMap, //callback
+      colors.buttonText
+    ); //textcolor
+
+    lastElt = gui.createRadio(
+      'zoomRadio',
+      mapFill, //value
+      preferences.zoomRange, //values
+      preferences.zoomLabels, //texts
+      gui_elts.sideBar.x + sizes.margin, //x
+      lastElt.y + lastElt.height + sizes.textMargin, //y
+      gui_elts.sideBar.width - sizes.margin * 2, //width
+      sizes.sliderW.height * 1.2, //height
+      colors.sliderCol, //color
+      setMapFill, //callback
       colors.buttonText
     ); //textcolor
 
@@ -1552,6 +1569,16 @@ var s = function (p) {
       map.setStyle(style);
       mapImages.refresh(map, p, false);
       preferences.map = style;
+    }
+  }
+
+  function setMapFill(level) {
+    if (level != mapFill && preferences.zoomRange.indexOf(level) > -1) {
+      memo = null;
+      mapFill = level;
+      let zoom = setZoom();
+      loadMap(zoom);
+      mapImages.refresh(map, p, true);
     }
   }
 
