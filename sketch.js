@@ -33,6 +33,7 @@ var s = function (p) {
   //Remember if this is an external or internal file
   let external = false;
 
+  // How much of the screen does the path fill
   let mapFill = 1;
 
   //Show welcome screen
