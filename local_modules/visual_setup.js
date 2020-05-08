@@ -9,8 +9,8 @@ function visual_setup() {
         map: 'none',
         mapRange: ['none', 'satellite-v9', 'outdoors-v10'],
         mapLabels: ['Clean', 'Satellite', 'Map'],
-        zoomRange: [1, 0.45, 0.2],
-        zoomLabels: ['Narrow', 'Wide', 'Region'],
+        zoomRange: [1, 0.75, 0.625],
+        zoomLabels: ['Narrow', 'Medium', 'Wide'],
         smooth: 4,
         smoothRange: [0, 20]
       };

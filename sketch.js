@@ -147,8 +147,8 @@ var s = function (p) {
     function isOutside(lon, lat) {
       let sLon = conversions.lonToX(lon) + sizes.mainW.width / 2;
       let sLat = conversions.latToY(lat) + sizes.mainW.height / 2;
-      let w = (sizes.mainW.width - sizes.margin) * (0.5 + mapFill / 2);
-      let h = (sizes.mainW.height - sizes.margin) * (0.5 + mapFill / 2);
+      let w = (sizes.mainW.width - sizes.margin) * mapFill;
+      let h = (sizes.mainW.height - sizes.margin) * mapFill;
       if (sLon > w || sLon < sizes.margin) return true;
       if (sLat > h || sLat < sizes.margin) return true;
       return false;
