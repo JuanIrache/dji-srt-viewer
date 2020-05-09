@@ -1580,7 +1580,7 @@ var s = function (p) {
       mapFill = level;
       let zoom = setZoom();
       loadMap(zoom);
-      mapImages.refresh(map, p, true);
+      mapImages.refresh(map, p, false);
     }
   }
 

@@ -35,21 +35,25 @@ function mapImagesModule() {
   }
 
   return {
-    refresh: function(mp, p, reload) {
+    refresh: function (mp, p, reload) {
       mapUrlsArr = mp.getUrlsAndXY();
       if (reload || !mapImgsArr) mapImgsArr = mapUrlsArr;
-      if (!mapImgsArr || !mapImgsArr[0] || !mapImgsArr[0][mp.getStyle()])
+      if (
+        !mapImgsArr ||
+        !mapImgsArr[0] ||
+        !mapImgsArr[0][mp.getStyle() + ':' + mp.getZoom()]
+      )
         reload = true;
       if (reload) {
-        loadMapStyle(mp, mp.getStyle(), p);
+        loadMapStyle(mp, mp.getStyle() + ':' + mp.getZoom(), p);
       }
     },
-    paint: function(mp, p) {
+    paint: function (mp, p) {
       if (mp.getStyle() != 'none' && mapImgsArr) {
-        let style = mp.getStyle();
+        let key = mp.getStyle() + ':' + mp.getZoom();
         mapImgsArr.forEach(img => {
-          if (img[style] && img[style].width > 1) {
-            p.image(img[style], img.x, img.y);
+          if (img[key] && img[key].width > 1) {
+            p.image(img[key], img.x, img.y);
           } else {
             loadingImg(p);
           }
