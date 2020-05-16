@@ -1074,6 +1074,11 @@ var s = function (p) {
     return result;
   }
 
+  function getElevationType(pckt) {
+    const options = ['ALTITUDE', 'BAROMETER', 'HB', 'HS'];
+    for (const option of options) if (pckt[option] != undefined) return option;
+  }
+
   function setTone(val, min, max, neg) {
     if (min === max) {
       return p.map(0.5, 0, 1, colors.greenTone, colors.redTone);
@@ -1485,31 +1490,35 @@ var s = function (p) {
   }
 
   function getElevationOffset(data) {
-    if (window.google != null && data.metadata().packets.length) {
-      let { LATITUDE, LONGITUDE } = data.metadata().packets[0].GPS;
-      if (
-        data.metadata().packets[0].HOME &&
-        data.metadata().packets[0].HOME.LATITUDE != null &&
-        data.metadata().packets[0].HOME.LONGITUDE != null
-      ) {
-        LATITUDE = data.metadata().packets[0].HOME.LATITUDE;
-        LONGITUDE = data.metadata().packets[0].HOME.LONGITUDE;
-      }
-      if (LATITUDE != null && LONGITUDE != null) {
-        var elevator = new google.maps.ElevationService();
-        elevator.getElevationForLocations(
-          {
-            locations: [{ lat: LATITUDE, lng: LONGITUDE }]
-          },
-          function (results, status) {
-            if (status === 'OK') {
-              // Retrieve the first result
-              if (results[0]) {
-                offsetElevation = results[0].elevation || 0;
+    if (data.metadata().packets.length) {
+      if (getElevationType(data.metadata().packets[0]) === 'ALTITUDE') {
+        offsetElevation = 0;
+      } else if (window.google != null) {
+        let { LATITUDE, LONGITUDE } = data.metadata().packets[0].GPS;
+        if (
+          data.metadata().packets[0].HOME &&
+          data.metadata().packets[0].HOME.LATITUDE != null &&
+          data.metadata().packets[0].HOME.LONGITUDE != null
+        ) {
+          LATITUDE = data.metadata().packets[0].HOME.LATITUDE;
+          LONGITUDE = data.metadata().packets[0].HOME.LONGITUDE;
+        }
+        if (LATITUDE != null && LONGITUDE != null) {
+          var elevator = new google.maps.ElevationService();
+          elevator.getElevationForLocations(
+            {
+              locations: [{ lat: LATITUDE, lng: LONGITUDE }]
+            },
+            function (results, status) {
+              if (status === 'OK') {
+                // Retrieve the first result
+                if (results[0]) {
+                  offsetElevation = results[0].elevation || 0;
+                }
               }
             }
-          }
-        );
+          );
+        }
       }
     }
   }
