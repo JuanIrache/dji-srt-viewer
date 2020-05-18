@@ -8,6 +8,8 @@
   },
   "main": "sketch.js",
   "dependencies": {
+    "@babel/plugin-transform-async-to-generator": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.9.6",
     "@mapbox/togeojson": "^0.16.0",
     "dji_srt_parser": "^1.1.10",
     "latlon_to_xy": "^1.0.3",
