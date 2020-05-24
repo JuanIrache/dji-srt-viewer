@@ -68,7 +68,7 @@ function helper() {
   }
 
   return {
-    formatCamera: function(pckt) {
+    formatCamera: function (pckt) {
       let phrase = [];
       if (pckt.ISO != null) phrase.push('ISO: ' + pckt.ISO);
       if (pckt.FNUM != null) phrase.push('Aperture: F' + pckt.FNUM);
@@ -76,10 +76,10 @@ function helper() {
       if (pckt.EV != null) phrase.push('EV: ' + doNf(pckt.EV, 1, 1));
       return phrase.join(' | '); //VALUE
     },
-    formatCoordinates: function(gps) {
+    formatCoordinates: function (gps) {
       return 'Location: ' + convertDMS(gps.LATITUDE, gps.LONGITUDE);
     },
-    formatDistance: function(curr, tot, imperial) {
+    formatDistance: function (curr, tot, imperial) {
       curr /= 1000;
       tot /= 1000;
       let units = 'km';
@@ -94,14 +94,14 @@ function helper() {
         2
       )} ${units}`;
     },
-    formatDate: function(date) {
+    formatDate: function (date) {
       return (
         new Date(date).toLocaleDateString() +
         ' | ' +
         new Date(date).toLocaleTimeString()
       );
     },
-    loadDialog: function(p, confirm) {
+    loadDialog: function (p, confirm) {
       document
         .querySelector('#loadFiles')
         .addEventListener('change', async event => {
@@ -133,7 +133,7 @@ function helper() {
         });
       document.getElementById('loadFiles').click();
     },
-    launchGoogleMaps: function(lat, lon) {
+    launchGoogleMaps: function (lat, lon) {
       function link(url, winName, options) {
         (winName && open(url, winName, options)) || (location = url);
       }
@@ -141,19 +141,19 @@ function helper() {
         'https://www.google.com/maps/search/?api=1&query=' + lat + '%2C' + lon;
       link(url, '_blank');
     },
-    launchLink: function(url) {
+    launchLink: function (url) {
       function link(url, winName, options) {
         (winName && open(url, winName, options)) || (location = url);
       }
       link(url, '_blank');
     },
-    preloadFile: function(file, cb, demo) {
+    preloadFile: function (file, cb, demo) {
       function loadFileBrowser(file) {
         function readTextFile(file) {
           let rawFile = new XMLHttpRequest();
           let allText;
           rawFile.open('GET', file, true);
-          rawFile.onreadystatechange = function() {
+          rawFile.onreadystatechange = function () {
             if (rawFile.readyState === 4) {
               if (rawFile.status === 200 || rawFile.status == 0) {
                 let allText = rawFile.responseText;
