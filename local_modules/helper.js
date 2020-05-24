@@ -129,6 +129,7 @@ function helper() {
               confirm(result);
             }
           } else confirm({});
+          document.querySelector('#loadFiles').value = '';
         });
       document.getElementById('loadFiles').click();
     },
