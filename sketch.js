@@ -501,7 +501,7 @@ var s = function (p) {
       colors.sliderCol, //color
       setSmoothing, //callback
       0, //min
-      20
+      100
     ); //max
 
     lastElt = gui.createText(
