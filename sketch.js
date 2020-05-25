@@ -1286,12 +1286,12 @@ var s = function (p) {
     p.push();
     p.translate(gui_elts.topMap.width / 2, gui_elts.topMap.height / 2);
     if (main) {
-      p.stroke(tone, 100, colors.lineBri / 2);
+      p.stroke(0);
       p.strokeWeight(thick * mapFill);
       p.point(x, y);
     } else {
       p.noFill();
-      p.stroke(colors.textCol);
+      p.stroke(0);
       p.strokeWeight(sizes.shadowSize);
       p.ellipse(x, y, thick, thick);
     }
@@ -1314,12 +1314,12 @@ var s = function (p) {
     let alt = chooseAlt(pck); //set proportion variables, read other value if barometer not present
     y = mapAlt(alt, stats);
     if (main) {
-      p.stroke(tone, 100, colors.lineBri / 2);
+      p.stroke(255);
       p.strokeWeight(thick);
       p.point(x, y);
     } else {
       p.noFill();
-      p.stroke(colors.textCol);
+      p.stroke(255);
       p.strokeWeight(sizes.shadowSize);
       p.ellipse(x, y, thick, thick);
     }
