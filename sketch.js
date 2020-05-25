@@ -300,9 +300,31 @@ var s = function (p) {
           external = isExternal;
           DJIData = preDJIData;
           offsetElevation = 0;
+          // Reset smooth range
+          preferences.smoothRange[1] = 20;
+          preferences.smooth = 4;
           if (hasExtension(f.name, '.SRT')) {
             //SRT files often have takeoff based altitude
             getElevationOffset(DJIData);
+            // Apply higher smoothing to sources with many samples per second
+            let timeInterval = 1000;
+            const packets = DJIData.metadata().packets;
+            if (packets && packets.length > 1) {
+              const firstTime = packets[0].DATE;
+              for (let i = 1; i < packets.length; i++) {
+                if (packets[i].DATE !== firstTime) {
+                  timeInterval = (packets[i].DATE - firstTime) / i;
+                  if (i > 10) break;
+                }
+              }
+            }
+            // Adapt current and max smoothing to data frequency
+            preferences.smooth = p.round(
+              p.constrain(p.map(timeInterval, 1000, 50, 4, 100), 1, 100)
+            );
+            preferences.smoothRange[1] = p.round(
+              p.constrain(p.map(timeInterval, 1000, 50, 20, 200), 20, 200)
+            );
           }
           let zoom = setZoom();
           player = createPlayer(DJIData.metadata().packets.length, 0, true);
@@ -500,8 +522,8 @@ var s = function (p) {
       sizes.textSize * 1.1, //height
       colors.sliderCol, //color
       setSmoothing, //callback
-      0, //min
-      100
+      preferences.smoothRange[0], //min
+      preferences.smoothRange[1]
     ); //max
 
     lastElt = gui.createText(
