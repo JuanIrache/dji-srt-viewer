@@ -1371,18 +1371,7 @@ var s = function (p) {
     p.line(-thick / 2, i, thick / 2, i);
   }
 
-  function drawLegend(
-    min,
-    max,
-    y,
-    alt,
-    mAlt,
-    mMin,
-    thick,
-    stats,
-    color,
-    units
-  ) {
+  function drawLegend(min, max, y, alt, mAlt, mMin, thick, color, units) {
     p.stroke(color);
     p.strokeWeight(5);
     p.line(-thick / 2, y, thick / 2, y);
@@ -1421,7 +1410,6 @@ var s = function (p) {
       mMax.toFixed(2),
       mMin.toFixed(2),
       thick,
-      stats,
       color,
       units
     );
@@ -1449,7 +1437,7 @@ var s = function (p) {
     let mMin = p.nf(statsType.min * mult, 1, 2);
     let mAlt = p.nf(statsType.max * mult, 1, 2);
 
-    drawLegend(min, max, y, alt, mAlt, mMin, thick, stats, color, units);
+    drawLegend(min, max, y, alt, mAlt, mMin, thick, color, units);
   }
 
   function drawGraph(pck, elt) {
