@@ -1371,7 +1371,7 @@ var s = function (p) {
     p.line(-thick / 2, i, thick / 2, i);
   }
 
-  function drawLegend(min, max, y, alt, mAlt, mMin, thick, color, units) {
+  function drawLegend(min, max, y, mAlt, mMax, mMin, thick, color, units) {
     p.stroke(color);
     p.strokeWeight(5);
     p.line(-thick / 2, y, thick / 2, y);
@@ -1380,9 +1380,9 @@ var s = function (p) {
     p.textAlign(p.LEFT, p.CENTER);
     p.noStroke();
     p.textSize(sizes.textSize * 0.7); //save somewhere?
-    p.text(alt + ' ' + units, sizes.margin, y);
+    p.text(mAlt + ' ' + units, sizes.margin, y);
     if (Math.abs(y - min) > sizes.textSize * 0.7)
-      p.text(mAlt + ' ' + units, sizes.margin, min); //draw max and min values if not really close to current
+      p.text(mMax + ' ' + units, sizes.margin, min); //draw max and min values if not really close to current
     if (Math.abs(y - max) > sizes.textSize * 0.7)
       p.text(mMin + ' ' + units, sizes.margin, max);
   }
@@ -1425,7 +1425,7 @@ var s = function (p) {
     let thick = Math.abs(sizes.lineThick[0] - sizes.lineThick[1]) / 2;
     const mult = imperial ? 0.621371 : 1;
     const units = imperial ? 'mph' : 'km/h';
-    let alt = p.nf(pckType, 1, 2);
+    let mAlt = p.nf(pckType * mult, 1, 2);
     let y = p.map(pckType, statsType.min, statsType.max, max, min);
     let tone = setTone(
       pckType,
@@ -1435,9 +1435,9 @@ var s = function (p) {
     ); //negative numbers ok if verticla spped
     let color = p.color(tone, 100, colors.lineBri / 2);
     let mMin = p.nf(statsType.min * mult, 1, 2);
-    let mAlt = p.nf(statsType.max * mult, 1, 2);
+    let mMax = p.nf(statsType.max * mult, 1, 2);
 
-    drawLegend(min, max, y, alt, mAlt, mMin, thick, color, units);
+    drawLegend(min, max, y, mAlt, mMax, mMin, thick, color, units);
   }
 
   function drawGraph(pck, elt) {
