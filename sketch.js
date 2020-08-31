@@ -958,7 +958,7 @@ var s = function (p) {
     } catch (e0) {
       console.error('Unable to create MediaRecorder with options Object: ', e0);
       try {
-        options = { mimeType: 'video/webm,codecs=vp9' };
+        options = { mimeType: 'video/webm;codecs=vp9' };
         mediaRecorder = new MediaRecorder(stream, options);
       } catch (e1) {
         console.error(
