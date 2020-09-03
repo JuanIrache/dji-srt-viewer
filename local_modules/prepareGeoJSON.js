@@ -1,5 +1,5 @@
 function fromGeoJSON(JSONstr, { speeds2D, speeds3D } = {}) {
-  let deduceDate = function(preDate) {
+  let deduceDate = function (preDate) {
     let postDate = preDate;
     if (typeof preDate === 'number') {
       postDate = new Date(preDate).toISOString(); //check that interpreter matches this string
@@ -14,7 +14,7 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D } = {}) {
 
   let geoJSON = typeof JSONstr === 'string' ? JSON.parse(JSONstr) : JSONstr;
   let result = [];
-  let checkAndUpdateHome = function(packet, object, key) {
+  let checkAndUpdateHome = function (packet, object, key) {
     if (key.toUpperCase() === 'HOME') {
       if (Arra.isArray(object[key])) {
         packet.HOME = object[key].map(num => num.toString());
@@ -35,7 +35,7 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D } = {}) {
     }
     return false;
   };
-  let looksLikeNumber = function(val) {
+  let looksLikeNumber = function (val) {
     if (isNaN(val)) return false;
     if (typeof val === 'number') return true;
     if (/^(\d|\.|\-)+$/.test(val)) return true;
@@ -111,7 +111,7 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D } = {}) {
       result = result.filter(n => n != undefined);
     }
   }
-  let chooseFeature = function(arr) {
+  let chooseFeature = function (arr) {
     return arr.reduce((acc, pckt) => {
       if (
         pckt.type === 'Feature' &&
@@ -155,7 +155,7 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D } = {}) {
           basePacket[prop.toUpperCase()] = object.properties[prop].toString();
         }
       }
-      let returnExisting = function(obj, keys) {
+      let returnExisting = function (obj, keys) {
         let result = false;
         keys.forEach(key => {
           if (obj[key] != null) {
@@ -216,7 +216,7 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D } = {}) {
     }
   }
 
-  let generateStandardPacket = function(pckt) {
+  let generateStandardPacket = function (pckt) {
     let packet = JSON.parse(JSON.stringify(schema));
     for (let prop in pckt) {
       if (pckt[prop]) {
