@@ -183,14 +183,20 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D } = {}) {
           ).toString();
           if (object.properties) {
             if (dateLocation && dateLocation.length > i) {
+              let dateObj;
               if (
                 looksLikeNumber(dateLocation[i]) &&
                 dateLocation[i].toString().length > 15
               ) {
-                packet.DATE = new Date(dateLocation[i] / 1000).toISOString();
+                dateObj = new Date(dateLocation[i] / 1000);
               } else {
-                packet.DATE = new Date(dateLocation[i]).toISOString();
+                dateObj = new Date(dateLocation[i]);
               }
+              // Hack to read as local time. Might be wrong
+              dateObj.setMinutes(
+                dateObj.getMinutes() + dateObj.getTimezoneOffset()
+              );
+              packet.DATE = dateObj.toISOString();
             }
           }
           result.push(packet);
