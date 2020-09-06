@@ -7,8 +7,8 @@ function visual_setup() {
     preferences: function () {
       return {
         map: 'none',
-        mapRange: ['none', 'satellite-v9', 'outdoors-v10'],
-        mapLabels: ['Clean', 'Satellite', 'Map'],
+        mapRange: ['none', 'satellite-v9', 'outdoors-v11', 'dark-v10'],
+        mapLabels: ['Clean', 'Satellite', 'Map', 'Dark'],
         zoomRange: [1, 0.75, 0.625],
         zoomLabels: ['Narrow', 'Medium', 'Wide'],
         smooth: 4,
