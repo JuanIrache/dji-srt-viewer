@@ -3,7 +3,7 @@ function mapImagesModule() {
   let mapImgsArr;
   let mapUrlsArr;
   let reloadRequested = false; //timeout and reloadrequested allow for delayed api calls to avoid consumint too many resources
-  const timeout = 5000;
+  const timeout = 2000;
   let lastCall = -timeout;
 
   function loadingImg(p) {
