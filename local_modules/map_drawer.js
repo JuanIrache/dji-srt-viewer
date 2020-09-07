@@ -53,7 +53,11 @@ function mapImagesModule() {
         let key = mp.getStyle() + ':' + mp.getZoom();
         mapImgsArr.forEach(img => {
           if (img[key] && img[key].width > 1) {
-            p.image(img[key], img.x, img.y);
+            p.push();
+            p.translate(img.x, img.y);
+            p.scale(0.5);
+            p.image(img[key], 0, 0);
+            p.pop();
           } else {
             loadingImg(p);
           }

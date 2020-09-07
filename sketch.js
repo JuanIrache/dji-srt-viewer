@@ -120,19 +120,18 @@ var s = function (p) {
   };
 
   function loadMap(zoom) {
-    // let mapW = p.width+p.width*(1-sizes.main)*2;
-    // let mapH = p.height+sizes.bottom.height*2; //cover all usable screen with map (too many map views in mapbox)
-    let mapW = sizes.mainW.width;
-    let mapH = sizes.mainW.height;
-    map.setup(
-      mapBoxToken,
-      mapW,
-      mapH,
+    let screen_width = sizes.mainW.width;
+    let screen_height = sizes.mainW.height;
+    console.log(screen_width);
+    map.setup({
+      mapBoxToken, // Provided by MapBox
+      screen_width,
+      screen_height,
       zoom,
-      preferences.map,
-      conversions,
-      1024
-    );
+      map_style: preferences.map, //Available styles can be found here: https://www.mapbox.com/api-documentation/#styles
+      location_data: conversions, //location_data must be an instance of this other module: https://github.com/JuanIrache/latlon_to_xy
+      tile_size: 1024
+    });
   }
 
   function setZoom() {
