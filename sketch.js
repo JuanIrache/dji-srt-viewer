@@ -122,14 +122,13 @@ var s = function (p) {
   function loadMap(zoom) {
     let screen_width = sizes.mainW.width;
     let screen_height = sizes.mainW.height;
-    console.log(screen_width);
     map.setup({
-      mapBoxToken, // Provided by MapBox
+      mapBoxToken,
       screen_width,
       screen_height,
       zoom,
-      map_style: preferences.map, //Available styles can be found here: https://www.mapbox.com/api-documentation/#styles
-      location_data: conversions, //location_data must be an instance of this other module: https://github.com/JuanIrache/latlon_to_xy
+      map_style: preferences.map,
+      location_data: conversions,
       tile_size: 1024
     });
   }

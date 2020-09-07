@@ -7,6 +7,6 @@ browserify()
   .require('./sketch.js', { entry: true })
   .bundle()
   .on('error', function (err) {
-    console.log('Error: ' + err.message);
+    console.error('Error: ' + err.message);
   })
   .pipe(fs.createWriteStream('bundle.js'));
