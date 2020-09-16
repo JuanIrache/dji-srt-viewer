@@ -92,11 +92,11 @@ var s = function (p) {
             //Errors come as JSON, try to parse them
             let error = null;
             try {
-              error = JSON.parse(str).error;
+              error = JSON.parse(str).warning;
             } catch (error) {}
             if (str == null || str.length < 3 || error) {
               alternative(
-                'File not found.\nIf you were using the GoPro Telemetry Extractor,\nthis means your file was deleted from our server to preserve your privacy.\nYou can load the file again from the GoPro Telemetry Extractor\nor download it in GPX to use it later.'
+                'File not found.\nIf you were using the GoPro Telemetry Extractor,\nthis means your file was deleted from the server to preserve your privacy.\nYou can load the file again from the GoPro Telemetry Extractor\nor download it as GPX to use it later.'
               )();
             } else {
               confirm(
