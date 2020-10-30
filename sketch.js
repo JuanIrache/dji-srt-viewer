@@ -879,7 +879,7 @@ var s = function (p) {
     );
     gui.createButton(
       'overlaysButton',
-      'After Effects', //text value
+      'TELEMETRY OVERLAY', //text value
       sizes.welcomeBG.width / 2 - sizes.textSize * 8, //x
       sizes.welcomeBG.height / 2 + sizes.sliderW.height * 1.5 * 4, //y
       sizes.textSize * 16, //width
@@ -1722,7 +1722,7 @@ var s = function (p) {
 
   function loadOverlays() {
     helper.launchLink(
-      'https://goprotelemetryextractor.com/mavic-phantom-inspire-telemetry'
+      'https://goprotelemetryextractor.com/telemetry-overlay-gps-video-sensors'
     );
     gui_elts.overlaysButton.unClick();
   }
