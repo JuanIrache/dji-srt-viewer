@@ -9,7 +9,7 @@
   "main": "sketch.js",
   "dependencies": {
     "@mapbox/togeojson": "^0.16.0",
-    "dji_srt_parser": "^1.1.15",
+    "dji_srt_parser": "^1.1.18",
     "latlon_to_xy": "^1.0.3",
     "mapbox_static_helper": "^2.0.0",
     "p5_gui": "^1.0.6",
@@ -18,11 +18,11 @@
     "xmldom": "^0.1.31"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
+    "@babel/core": "^7.12.10",
     "@babel/plugin-transform-async-to-generator": "^7.12.1",
     "@babel/plugin-transform-destructuring": "^7.12.1",
-    "@babel/plugin-transform-runtime": "^7.12.1",
-    "@babel/preset-env": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
     "babel-core": "^6.26.3",
     "babelify": "^10.0.0",
     "brfs": "^2.0.2",
