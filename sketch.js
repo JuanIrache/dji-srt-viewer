@@ -183,7 +183,7 @@ var s = function (p) {
         DJIData.metadata().stats.DATE,
         // not essential? DJIData.metadata().stats.HOME[0].LATITUDE,
         DJIData.metadata().stats.SPEED.THREED.avg,
-        // not effective DJIData.metadata().stats.BAROMETER || DJIData.metadata().stats.HB || DJIData.metadata().stats.HS || DJIData.metadata().stats.GPS.ALTITUDE,
+        // not effective DJIData.metadata().stats.BAROMETER || DJIData.metadata().stats.HB || DJIData.metadata().stats.GPS.ALTITUDE,
         DJIData.metadata().stats.DURATION,
         DJIData.metadata().stats.DISTANCE,
         DJIData.metadata().stats.GPS.LATITUDE.avg
@@ -1088,14 +1088,12 @@ var s = function (p) {
       result = pckt.BAROMETER;
     } else if (pckt.HB != undefined) {
       result = pckt.HB;
-    } else if (pckt.HS != undefined) {
-      result = pckt.HS;
     }
     return result;
   }
 
   function getElevationType(pckt) {
-    const options = ['ALTITUDE', 'BAROMETER', 'HB', 'HS'];
+    const options = ['ALTITUDE', 'BAROMETER', 'HB'];
     for (const option of options) if (pckt[option] != undefined) return option;
   }
 

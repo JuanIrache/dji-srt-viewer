@@ -145,7 +145,6 @@ function fromGeoJSON(JSONstr, { speeds2D, speeds3D } = {}) {
             'SPEED_TWOD',
             'SPEED_VERTICAL',
             'HB',
-            'HS',
             'TIMES',
             'TIME',
             'FEATURECOORDTIMES',
