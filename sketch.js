@@ -15,7 +15,7 @@ var s = function (p) {
     DOMParser = require('xmldom').DOMParser,
     fromText = require('./local_modules/fromText'),
     prepareGeoJSON = require('./local_modules/prepareGeoJSON'),
-    tokml = require('tokml'),
+    tokml = require('@maphubs/tokml'),
     togpx = require('togpx');
 
   let preferences,
