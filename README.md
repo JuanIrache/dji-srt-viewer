@@ -32,10 +32,10 @@ $ browserify sketch.js -o bundle.js
 
 ## TODO
 
+- Update vulnerable dependencies (kml)
 - Show file not supported when loading from the overlay and failed
 - Review why the H sign appears with bad data (some gopro samples in gpx)
 - Read and save remote gpx in local storage?
-- satellite images appear pixelated now, for some reason
 - different playing speeds?
 - Move sidebar to bottom if proportion is... Worse than square? Height still in side. Load on top? smooth vertical? Camera and location divided in lines. background and downloads divided. speeds horizontal?
 - drop load files?
