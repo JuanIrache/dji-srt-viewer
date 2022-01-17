@@ -1,4 +1,5 @@
 'use strict';
+const fixCoordTimes = require('./local_modules/fixCoordTimes');
 const { mapBoxToken, googleToken, gtagToken } = require('./private/keys'); //tokens
 
 var s = function (p) {
@@ -248,7 +249,7 @@ var s = function (p) {
           for (index = element.length - 1; index >= 0; index--) {
             element[index].parentNode.removeChild(element[index]);
           }
-          var converted = togeojson.kml(kml);
+          var converted = fixCoordTimes(togeojson.kml(kml));
           preDJIData = DJISRTParser(prepareGeoJSON(converted), f.name, true);
         } else if (hasExtension(f.name, '.text')) {
           var converted = fromText(f.data);
@@ -256,7 +257,8 @@ var s = function (p) {
         } else if (hasExtension(f.name, '.GPX')) {
           var gpx = new DOMParser().parseFromString(decode(f.data));
 
-          var converted = togeojson.gpx(gpx);
+          var converted = fixCoordTimes(togeojson.gpx(gpx));
+
           ///hack to extract GoPro speeds
           const speed3DRE = /<gpxtpx:speed>[\d.]+<\/gpxtpx:speed>/g;
           const speed2DRE = /2dSpeed:\s?[\d.]+/g;
