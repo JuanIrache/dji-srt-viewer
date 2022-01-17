@@ -1546,11 +1546,10 @@ var s = function (p) {
       }
     });
     if (timestamp) {
-      preKml.features[
-        preKml.features.length - 1
-      ].properties.timestamp = preKml.features[
-        preKml.features.length - 1
-      ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
+      preKml.features[preKml.features.length - 1].properties.timestamp =
+        preKml.features[preKml.features.length - 1].properties.timestamp.map(
+          stamp => new Date(stamp).toISOString()
+        );
       p.save([tokml(preKml)], getFileName(), 'KML');
     }
   }
@@ -1570,11 +1569,10 @@ var s = function (p) {
       }
     });
     if (timestamp) {
-      preGpx.features[
-        preGpx.features.length - 1
-      ].properties.times = preGpx.features[
-        preGpx.features.length - 1
-      ].properties.timestamp.map(stamp => new Date(stamp).toISOString());
+      preGpx.features[preGpx.features.length - 1].properties.times =
+        preGpx.features[preGpx.features.length - 1].properties.timestamp.map(
+          stamp => new Date(stamp).toISOString()
+        );
       p.save(
         [togpx(preGpx, { creator: 'dji-srt-viewer' })],
         getFileName(),
