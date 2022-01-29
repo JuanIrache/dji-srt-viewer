@@ -4,6 +4,15 @@ const fixCoordTimes = converted => {
   if (converted && converted.features && converted.features.length) {
     for (var i = 0; i < converted.features.length; i++) {
       var feature = converted.features[i];
+      if (feature.geometry.coordinates) {
+        if (!feature.properties) feature.properties = {};
+        if (!feature.properties.coordTimes) {
+          var anyDate = new Date().toISOString();
+          feature.properties.coordTimes = feature.geometry.coordinates.map(
+            c => anyDate
+          );
+        }
+      }
       if (feature.properties && feature.properties.coordTimes) {
         var coordTimes = feature.properties.coordTimes;
         if (coordTimes.length) {
