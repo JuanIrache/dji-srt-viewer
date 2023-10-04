@@ -2,9 +2,20 @@ function mapImagesModule() {
   //
   let mapImgsArr;
   let mapUrlsArr;
-  let reloadRequested = false; //timeout and reloadrequested allow for delayed api calls to avoid consumint too many resources
-  const timeout = 4000;
-  let lastCall = -timeout;
+  let reloadRequested = false; //timeout and reloadrequested allow for delayed api calls to avoid consuming too many resources
+
+  let rates = {
+    1440: 144000 / 8,
+    60: 6000 / 4,
+    5: 500 / 2,
+    1: 100
+  };
+
+  let calls = [];
+
+  try {
+    rates = require('../private/rates');
+  } catch (_) {}
 
   function loadingImg(p) {
     p.fill(50);
@@ -16,11 +27,20 @@ function mapImagesModule() {
   }
 
   function loadMapStyle(mp, style, p) {
-    let currentTime = window.performance.now();
+    let currentTime = Date.now();
     if (style != 'none' && mapImgsArr) {
+      const timeout = Math.max(
+        ...Object.keys(rates).map(min => {
+          const since = Date.now() - +min * 60 * 1000;
+          const countedCalls = calls.filter(c => c > since).length;
+          const ratio = Math.max(1, countedCalls / rates[min]);
+          return 4000 * ratio;
+        })
+      );
+      calls = calls.filter(c => c > Date.now() - 1440 * 60 * 100);
+      const lastCall = calls.slice(-1)[0] || 0;
       if (currentTime - lastCall > timeout) {
-        //don't call too often)
-        lastCall = currentTime;
+        calls.push(currentTime);
         for (let i = 0; i < mapUrlsArr.length; i++) {
           mapImgsArr[i][style] = p.loadImage(mapUrlsArr[i].url);
         }
