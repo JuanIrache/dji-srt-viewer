@@ -28,7 +28,7 @@
     "brfs": "^2.0.2",
     "browserify": "^16.5.2",
     "fs-extra": "^8.1.0",
-    "nodemon": "^1.19.4"
+    "nodemon": "^2.0.20"
   },
   "scripts": {
     "start": "nodemon --ignore bundle.js build.js",
