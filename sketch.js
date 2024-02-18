@@ -97,7 +97,7 @@ var s = function (p) {
             } catch (error) {}
             if (str == null || str.length < 3 || error) {
               alternative(
-                'File not found.\nIf you were using the GoPro Telemetry Extractor,\nthis means your file was deleted from the server to preserve your privacy.\nYou can load the file again from the GoPro Telemetry Extractor\nor download it as GPX to use it later.'
+                'File not found.\nIf you were using Telemetry Lite for GoPro,\nthis means your file was deleted from the server to preserve your privacy.\nYou can load the file again from Telemetry Lite for GoPro\nor download it as GPX to use it later.'
               )();
             } else {
               confirm(
@@ -893,7 +893,7 @@ var s = function (p) {
     );
     gui.createButton(
       'goProButton',
-      'GoPro Telemetry', //text value
+      'Telemetry Extractor', //text value
       sizes.welcomeBG.width / 2 - sizes.textSize * 8, //x
       sizes.welcomeBG.height / 2 + sizes.sliderW.height * 1.5 * 6, //y
       sizes.textSize * 16, //width
@@ -1726,7 +1726,9 @@ var s = function (p) {
   }
 
   function loadGoPro() {
-    helper.launchLink('https://goprotelemetryextractor.com/free');
+    helper.launchLink(
+      'https://goprotelemetryextractor.com/gopro-gps-telemetry-extract'
+    );
     gui_elts.goProButton.unClick();
   }
 
